@@ -1,0 +1,1 @@
+﻿convert -o "E:\svn\ddi\instance.xsd" "E:\svn\dditocogs\DdiToCogs\out" --typed="definedTypedReference.csv"

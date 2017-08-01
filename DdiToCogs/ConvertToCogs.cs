@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using CsvHelper;
+using System.Threading;
 
 namespace DdiToCogs
 {
@@ -26,6 +27,7 @@ namespace DdiToCogs
 
         List<TypedReference> loadedTypedReference = new List<TypedReference>();
 
+        
         private string ProcessXmlSchemaAnnotation(XmlSchemaAnnotation annotation)
         {
             if (annotation == null)
@@ -168,7 +170,8 @@ namespace DdiToCogs
                     p.Description = ProcessXmlSchemaAnnotation(attribute.Annotation);
                     p.DataType = attribute.AttributeSchemaType.QualifiedName.Name;
                     p.Name = attribute.QualifiedName.Name;
-                    if(attribute.Use == XmlSchemaUse.Optional)
+                    p.MinCardinality = "0";
+                    if (attribute.Use == XmlSchemaUse.Optional)
                     {
                         p.MinCardinality = "0";
                     }
@@ -390,8 +393,8 @@ namespace DdiToCogs
                     Property p = new Property();
                     p.Description = ProcessXmlSchemaAnnotation(groupRef.Annotation);
 
-                    p.DataType = "DublinCoreTerms";
-                    p.Name = "DublinCoreTerms";
+                    p.DataType = "DcTerms";
+                    p.Name = "DcTerms";
 
                     p.MinCardinality = "0";
                     p.MaxCardinality = "n";
@@ -455,7 +458,7 @@ namespace DdiToCogs
         {
             if (p.MaxCardinality == "unbounded") { p.MaxCardinality = "n"; }
             if (p.MaxCardinality == null) { p.MaxCardinality = "1"; }
-            if (p.MinCardinality == null) { p.MinCardinality = "1"; }
+            if (p.MinCardinality == null) { p.MinCardinality = "0"; }
         }
 
         public string SchemaLocation { get; set; }
@@ -484,6 +487,9 @@ namespace DdiToCogs
             ddiSchema = GetSchema(SchemaLocation);
 
             if(schemaError) { return 2; }
+
+
+            // inject dublin core type
 
 
             // load typed property definitions
@@ -564,10 +570,35 @@ namespace DdiToCogs
                 }
             }
 
+            CleanUp();
 
             WriteToCogs();
 
             return 0;
+        }
+
+        public void CleanUp()
+        {
+            var maintainable = items["MaintainableType"];
+            var versionable = items["VersionableType"];
+            var identifiable = dataTypes["IdentifiableType"];
+
+            var abstractMaintainable = dataTypes["AbstractMaintainableType"];
+            var abstractVersionable = dataTypes["AbstractVersionableType"];
+            var abstractIdentifiable = dataTypes["AbstractIdentifiableType"];
+            
+            // add userid to versionable, identification will be injected
+            var userId = abstractIdentifiable.Properties.Where(x => x.Name == "UserID").FirstOrDefault();
+            versionable.Properties.Insert(0, userId);
+            versionable.Extends = null;
+            // keep the first 5 properties
+            identifiable.Properties = identifiable.Properties.Take(5).ToList();
+            
+            dataTypes.Remove("AbstractIdentifiableType");
+            dataTypes.Remove("AbstractMaintainableType");
+            dataTypes.Remove("AbstractVersionableType");
+
+            
         }
 
         private bool IsSchemaType(string schemaTypeName)
@@ -628,30 +659,52 @@ namespace DdiToCogs
             if(Overwrite && Directory.Exists(TargetDirectory))
             {
                 Directory.Delete(TargetDirectory, true);
+                Thread.Sleep(50);
             }
 
             Directory.CreateDirectory(TargetDirectory);
 
             // write out found typed relationships
-            TextWriter textWriter = new StringWriter();
-            var csv = new CsvWriter(textWriter);
-            csv.WriteRecords(stronglyTypedReference);
-            File.WriteAllText(Path.Combine(TargetDirectory, "stronglyTypedReferences.csv"), textWriter.ToString(), Encoding.UTF8);
+            TextWriter textWriter = null;
+            CsvWriter csv = null;
+            using (textWriter = new StringWriter())
+            {
+                csv = new CsvWriter(textWriter);
+                csv.WriteRecords(stronglyTypedReference);
+                File.WriteAllText(Path.Combine(TargetDirectory, "stronglyTypedReferences.csv"), textWriter.ToString(), Encoding.UTF8);
+            }
 
-            textWriter = new StringWriter();
-            csv = new CsvWriter(textWriter);
-            csv.WriteRecords(conventionTypedReference);
-            File.WriteAllText(Path.Combine(TargetDirectory, "conventionTypedReference.csv"), textWriter.ToString(), Encoding.UTF8);
 
-            textWriter = new StringWriter();
-            csv = new CsvWriter(textWriter);
-            csv.WriteRecords(unknownTypedReference);
-            File.WriteAllText(Path.Combine(TargetDirectory, "unknownTypedReference.csv"), textWriter.ToString(), Encoding.UTF8);
+            using (textWriter = new StringWriter())
+            {
+                csv = new CsvWriter(textWriter);
+                csv.WriteRecords(conventionTypedReference);
+                File.WriteAllText(Path.Combine(TargetDirectory, "conventionTypedReference.csv"), textWriter.ToString(), Encoding.UTF8);
+            }
 
+
+            using (textWriter = new StringWriter())
+            {
+                csv = new CsvWriter(textWriter);
+                csv.WriteRecords(unknownTypedReference);
+                File.WriteAllText(Path.Combine(TargetDirectory, "unknownTypedReference.csv"), textWriter.ToString(), Encoding.UTF8);
+            }
+
+            HashSet<string> dataTypesUsed = new HashSet<string>();
+
+            string settingsPath = Path.Combine(TargetDirectory, "Settings");
+            Directory.CreateDirectory(settingsPath);
+            
+            using (textWriter = new StringWriter())
+            {
+                csv = new CsvWriter(textWriter);
+                csv.WriteRecords(identification);
+                File.WriteAllText(Path.Combine(settingsPath, "Identification.csv"), textWriter.ToString(), Encoding.UTF8);
+            }
 
             foreach (var itemPair in items)
             {
-                string itemPath = Path.Combine(TargetDirectory, GetTypeName(itemPair.Key));
+                string itemPath = Path.Combine(TargetDirectory, "ItemTypes", GetTypeName(itemPair.Key));
                 Directory.CreateDirectory(itemPath);
 
                 Item item = itemPair.Value;
@@ -660,10 +713,12 @@ namespace DdiToCogs
                     File.WriteAllText(Path.Combine(itemPath, "readme.markdown"), item.Description);
                 }
 
-                textWriter = new StringWriter();
-                csv = new CsvWriter(textWriter);
-                csv.WriteRecords(item.Properties);
-                File.WriteAllText(Path.Combine(itemPath, GetTypeName(item.Name) + ".csv"), textWriter.ToString(), Encoding.UTF8);
+                using (textWriter = new StringWriter())
+                {
+                    csv = new CsvWriter(textWriter);
+                    csv.WriteRecords(item.Properties);
+                    File.WriteAllText(Path.Combine(itemPath, GetTypeName(item.Name) + ".csv"), textWriter.ToString(), Encoding.UTF8);
+                }
 
                 if(item.Extends != null)
                 {
@@ -675,10 +730,19 @@ namespace DdiToCogs
                     string extendsFile = Path.Combine(itemPath, "Abstact");
                     File.Create(extendsFile).Dispose();
                 }
+
+                foreach(var prop in item.Properties)
+                {
+                    if(items.Keys.Contains(prop.DataType)) { continue; }
+                    dataTypesUsed.Add(prop.DataType);
+                    dataTypesUsed.UnionWith(GetParentTypes(prop.DataType));
+                }
+                
             }
 
-            string typesPath = Path.Combine(TargetDirectory, "types");
+            string typesPath = Path.Combine(TargetDirectory, "ReusableTypes");
             Directory.CreateDirectory(typesPath);
+            
 
             foreach (var typePair in dataTypes)
             {
@@ -691,10 +755,12 @@ namespace DdiToCogs
                     File.WriteAllText(Path.Combine(itemPath, "readme.markdown"), dataType.Description);
                 }
 
-                textWriter = new StringWriter();
-                csv = new CsvWriter(textWriter);
-                csv.WriteRecords(dataType.Properties);
-                File.WriteAllText(Path.Combine(itemPath, dataType.Name + ".csv"), textWriter.ToString(), Encoding.UTF8);
+                using (textWriter = new StringWriter())
+                {
+                    csv = new CsvWriter(textWriter);
+                    csv.WriteRecords(dataType.Properties);
+                    File.WriteAllText(Path.Combine(itemPath, dataType.Name + ".csv"), textWriter.ToString(), Encoding.UTF8);
+                }
 
                 if (dataType.Extends != null)
                 {
@@ -706,13 +772,35 @@ namespace DdiToCogs
                     string extendsFile = Path.Combine(itemPath, "Abstact");
                     File.Create(extendsFile).Dispose();
                 }
+
+                dataTypesUsed.UnionWith(dataType.Properties.Select(x => x.DataType));
+                dataTypesUsed.UnionWith(GetParentTypes(dataType.Name));
             }
 
+
+            // find reusable data types that are not used or base classes of a used datatype
+
+            var notUsed = dataTypes.Keys.Except(dataTypesUsed).ToList();
         }
 
         bool schemaError;
 
 
+        private List<string> GetParentTypes(string dataTypeName)
+        {
+            if(dataTypes.TryGetValue(dataTypeName, out DataType value))
+            {
+                if (string.IsNullOrWhiteSpace(value.Extends))
+                {
+                    return new List<string>();
+                }
+                var result = new List<string>();
+                result.Add(value.Extends);
+                result.AddRange(GetParentTypes(value.Extends));
+                return result;
+            }
+            return new List<string>();
+        }
 
 
         public XmlSchemaSet GetSchema(string filename)
@@ -785,5 +873,43 @@ namespace DdiToCogs
             }
             File.WriteAllText(output, doc.ToString(), Encoding.UTF8);
         }
+
+
+        List<Property> identification = new List<Property>() {
+            new Property()
+            {
+            Name = "URN",
+                DataType = "string",
+                MinCardinality = "1",
+                MaxCardinality = "1",
+                Pattern = @"[Uu][Rr][Nn]:[Dd][Dd][Ii]:[a-zA-Z0-9\-]{1,63}(\.[a-zA-Z0-9\-]{1,63})*:[A-Za-z0-9\*@$\-_]+(\.[A-Za-z0-9\*@$\-_]+)?:[0-9]+(\.[0-9]+)*",
+            },
+            new Property()
+            {
+                Name = "Agency",
+                DataType = "string",
+                MinCardinality = "1",
+                MaxCardinality = "1",
+                Pattern = @"[a-zA-Z0-9\-]{1,63}(\.[a-zA-Z0-9\-]{1,63})*",
+                MinLength = 1,
+                MaxLength = 253
+            },
+            new Property()
+            {
+                Name = "ID",
+                DataType = "string",
+                MinCardinality = "1",
+                MaxCardinality = "1",
+                Pattern = @"[A-Za-z0-9\*@$\-_]+(\.[A-Za-z0-9\*@$\-_]+)?"
+            },
+            new Property()
+            {
+                Name = "Version",
+                DataType = "string",
+                MinCardinality = "1",
+                MaxCardinality = "1",
+                Pattern = @"[0-9]+(\.[0-9]+)*"
+            }
+        };
     }
 }

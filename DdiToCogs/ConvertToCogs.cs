@@ -18,7 +18,7 @@ namespace DdiToCogs
         // all elements in DDI should have unique names, but are not in some locations across "substitution" namespaces
         Dictionary<string, Item> items = new Dictionary<string, Item>();
         Dictionary<string, DataType> dataTypes = new Dictionary<string, DataType>();
-        Dictionary<string, DataType> simpleTypes = new Dictionary<string, DataType>();
+        Dictionary<string, Property> simpleTypes = new Dictionary<string, Property>();
         Dictionary<string, List<string>> derivedFrom = new Dictionary<string, List<string>>();
 
         List<TypedReference> stronglyTypedReference = new List<TypedReference>();
@@ -64,7 +64,7 @@ namespace DdiToCogs
             {
                 dataType = new DataType();
             }
-            dataType.Name = complexType.QualifiedName.Name;
+            dataType.Name = GetTypeName(complexType.QualifiedName);
             dataType.IsAbstract = complexType.IsAbstract;
 
             // annotations are not consistent across the schemas
@@ -85,7 +85,7 @@ namespace DdiToCogs
 
                 if (complexType.ContentModel.Content is XmlSchemaSimpleContentExtension simpleContentExtension)
                 {
-                    dataType.Extends = simpleContentExtension.BaseTypeName.Name;
+                    dataType.Extends = GetTypeName(simpleContentExtension.BaseTypeName);
                     derivedFrom.AddValue(dataType.Extends, dataType.Name);
 
                     var attributeProps = GetPropertiesFromAttributes(simpleContentExtension.Attributes);
@@ -93,7 +93,7 @@ namespace DdiToCogs
                 }
                 else if (complexType.ContentModel.Content is XmlSchemaComplexContentExtension complexContentExtension)
                 {
-                    dataType.Extends = complexContentExtension.BaseTypeName.Name;
+                    dataType.Extends = GetTypeName(complexContentExtension.BaseTypeName);
                     derivedFrom.AddValue(dataType.Extends, dataType.Name);
 
                     if(complexContentExtension.Particle != null)
@@ -156,6 +156,45 @@ namespace DdiToCogs
 
         }
 
+        private string ProcessSchemaTypeToSimpleType(string schemaType)
+        {
+            switch (schemaType)
+            {
+                case "integer":
+                    return "int";
+                case "NMTOKENS":
+                case "NMTOKEN":
+                case "anySimpleType":
+                    return "string";
+                case "string":
+                case "boolean":
+                case "decimal":
+                case "float":
+                case "double":
+                case "duration":
+                case "dateTime":
+                case "time":
+                case "date":
+                case "gYearMonth":
+                case "gYear":
+                case "gMonthDay":
+                case "gDay":
+                case "gMonth":
+                case "anyURI":
+                case "language":
+                case "nonPositiveInteger":
+                case "negativeInteger":
+                case "long":
+                case "int":
+                case "nonNegativeInteger":
+                case "unsignedLong":
+                case "positiveInteger":
+                case "cogsDate":
+                    return schemaType;
+                default:
+                    return null;
+            }
+        }
 
         private string XmlSchemaNamespace = "http://www.w3.org/2001/XMLSchema";
         private List<Property> GetPropertiesFromAttributes(XmlSchemaObjectCollection attributes)
@@ -166,9 +205,12 @@ namespace DdiToCogs
             {
                 if(schemaObject is XmlSchemaAttribute attribute)
                 {
+                    if(attribute.QualifiedName.Name == "space") { continue; }
+
                     Property p = new Property();
                     p.Description = ProcessXmlSchemaAnnotation(attribute.Annotation);
-                    p.DataType = attribute.AttributeSchemaType.QualifiedName.Name;
+                    p.DataType = GetTypeName(attribute.AttributeSchemaType.QualifiedName);
+                    
                     p.Name = attribute.QualifiedName.Name;
                     p.MinCardinality = "0";
                     if (attribute.Use == XmlSchemaUse.Optional)
@@ -181,9 +223,23 @@ namespace DdiToCogs
                     }                    
                     p.MaxCardinality = "1";
                     
-
                     p.DeprecatedNamespace = attribute.QualifiedName.Namespace;
                     p.DeprecatedElementOrAttribute = "a";
+
+
+                    if (attribute.AttributeSchemaType.QualifiedName.Name == "NMTOKENS")
+                    {
+                        p.Pattern = "\\c+";
+                    }
+                    if(attribute.AttributeSchemaType.Content is XmlSchemaSimpleTypeRestriction restrictions)
+                    {
+                        if(restrictions.Facets.Count > 0)
+                        {
+                            ProcessSimpleTypeFacets(restrictions, p);
+                        }
+                        
+                    }
+
 
                     if (attribute.UnhandledAttributes != null) { throw new Exception(); }
 
@@ -262,16 +318,15 @@ namespace DdiToCogs
                             string parentTypeName = null;
                             XmlSchemaComplexType complexParent = GetFirstComplexParent(choice);
                             if (complexParent == null) { throw new InvalidOperationException("Could not find the parent of this choice"); }
-                            parentTypeName = GetTypeName(complexParent.QualifiedName.Name);
+                            parentTypeName = GetTypeName(complexParent.QualifiedName);
                             
 
-                            string itemName = GetTypeName(ct.QualifiedName.Name);
+                            string itemName = GetTypeName(ct.QualifiedName);
                             if (ct.IsAbstract)
                             {
                                 //TODO handle substitution groups?
                             }
-
-
+                            
                             TypedReference strongly = new TypedReference();
                             strongly.ParentTypeName = parentTypeName;
                             strongly.ReferenceName = reference.QualifiedName.Name;
@@ -280,6 +335,7 @@ namespace DdiToCogs
 
 
                             Property p = GetProperty(sibling);
+                            //p.DataType = GetTypeName(p.DataType);// this is always a versionable+
                             p.Name = strongly.ReferenceName; // use the reference name
                             p.MinCardinality = choice.MinOccursString;
                             p.MaxCardinality = choice.MaxOccursString;
@@ -345,7 +401,7 @@ namespace DdiToCogs
 
                         XmlSchemaComplexType complexParent = GetFirstComplexParent(element);
                         if (complexParent == null) { throw new InvalidOperationException("Could not find the parent of this reference"); }
-                        typedReference.ParentTypeName = GetTypeName(complexParent.QualifiedName.Name);
+                        typedReference.ParentTypeName = GetTypeName(complexParent.QualifiedName);
 
                         if(typedReference.ItemTypeName == null)
                         {
@@ -376,6 +432,7 @@ namespace DdiToCogs
                         x.ReferenceName == typedReference.ReferenceName).FirstOrDefault();
                     if(defined != null && !string.IsNullOrWhiteSpace(defined.ItemTypeName))
                     {
+                        // references to complex types/historic identifiable refs have Type at the end
                         p.DataType = defined.ItemTypeName;
                     }
                 }
@@ -393,7 +450,7 @@ namespace DdiToCogs
                     Property p = new Property();
                     p.Description = ProcessXmlSchemaAnnotation(groupRef.Annotation);
 
-                    p.DataType = "DcTerms";
+                    p.DataType = "dcTerms";
                     p.Name = "DcTerms";
 
                     p.MinCardinality = "0";
@@ -436,8 +493,9 @@ namespace DdiToCogs
         {
             Property p = new Property();
             p.Description = ProcessXmlSchemaAnnotation(element.Annotation);
+            
+            p.DataType = GetTypeName(element.ElementSchemaType.QualifiedName);
 
-            p.DataType = element.ElementSchemaType.QualifiedName.Name;
             p.Name = element.QualifiedName.Name;
 
             p.MinCardinality = element.MinOccursString;
@@ -524,12 +582,17 @@ namespace DdiToCogs
                     continue;
                 }
                 
-                if(definedType.QualifiedName.Name == "anyType" || 
-                    definedType.QualifiedName.Name == "FragmentType" ||
+                if(definedType.QualifiedName.Name == "FragmentType" ||
                     definedType.QualifiedName.Name == "FragmentInstanceType")
                 {
                     continue;
                 }
+
+                if (definedType.QualifiedName.Name == "anyType")
+                {
+                    continue;
+                }
+
 
                 XmlSchemaComplexType complexType = definedType as XmlSchemaComplexType;
                 if(complexType != null)
@@ -548,27 +611,103 @@ namespace DdiToCogs
                 XmlSchemaSimpleType simpleType = definedType as XmlSchemaSimpleType;
                 if (simpleType != null)
                 {
-                    DataType dataType = new DataType();
-                    dataType.Name = simpleType.QualifiedName.Name;
-                    dataType.DeprecatedNamespace = simpleType.QualifiedName.Namespace;
+                    Property property = new Property();
+                    property.Name = simpleType.QualifiedName.Name;
+                    property.DeprecatedNamespace = simpleType.QualifiedName.Namespace;
 
                     // annotations are not consistent across the schemas
-                    dataType.Description += ProcessXmlSchemaAnnotation(simpleType.Annotation);
+                    property.Description += ProcessXmlSchemaAnnotation(simpleType.Annotation);
                     if (simpleType.Annotation == null)
                     {
-                        dataType.Description += ProcessXmlSchemaAnnotation(simpleType?.Content?.Annotation);
+                        property.Description += ProcessXmlSchemaAnnotation(simpleType?.Content?.Annotation);
                     }
 
-
-
-                    if (simpleTypes.ContainsKey(dataType.Name))
+                    if(simpleType.Content is XmlSchemaSimpleTypeRestriction simpleTypeRestriction)
                     {
-                        throw new InvalidOperationException("DDI complexTypes must have unique names: " + dataType.Name);
+                        if (simpleType.TypeCode == XmlTypeCode.String)
+                        {
+                            property.DataType = "string";
+                            ProcessSimpleTypeFacets(simpleTypeRestriction, property);
+                        }
+                        else if (simpleType.TypeCode == XmlTypeCode.NmToken)
+                        {
+                            property.DataType = "string";
+                            ProcessSimpleTypeFacets(simpleTypeRestriction, property);
+                        }
+                        else if (simpleType.TypeCode == XmlTypeCode.Decimal)
+                        {
+                            property.DataType = "decimal";
+                            ProcessSimpleTypeFacets(simpleTypeRestriction, property);
+                        }
+                        else if (simpleType.TypeCode == XmlTypeCode.Float)
+                        {
+                            property.DataType = "float";
+                            ProcessSimpleTypeFacets(simpleTypeRestriction, property);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("DDI simpleTypes using unknown typecode: " + simpleType.TypeCode.ToString());
+                        }
                     }
-                    simpleTypes[dataType.Name] = dataType;
+                    else if (simpleType.Content is XmlSchemaSimpleTypeUnion unionType)
+                    {
+                        if(property.Name == "DDIURNType")
+                        {
+                            property.DataType = "string";
+                            ProcessSimpleTypeFacets((XmlSchemaSimpleTypeRestriction)unionType.BaseMemberTypes[0].Content, property);
+                        }
+                        else if(property.Name == "BaseDateType")
+                        {
+                            property.DataType = "cogsDate";
+                        }
+                        else if(property.Name == "PrivacyCodeType")
+                        {
+                            // this is either a string, or a enumerated list. Make this a CV in a future version
+                            property.DataType = "string";
+                            ProcessSimpleTypeFacets((XmlSchemaSimpleTypeRestriction)unionType.BaseMemberTypes[1].Content, property);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("DDI simpleTypes using unknown union: " + simpleType.TypeCode.ToString());
+                        }
+                    }
+                    else if (simpleType.Content is XmlSchemaSimpleTypeList listType)
+                    {
+                        if (property.Name == "LanguageList")
+                        {
+                            property.DataType = "language";
+                            property.MinCardinality = "0";
+                            property.MaxCardinality = "n";
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("DDI simpleTypes using unknown typelist: " + simpleType.TypeCode.ToString());
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("No SimpleTypeRestriction for simpleType using unknown typecode: " + simpleType.TypeCode.ToString());
+                    }
+
+
+
+                    if (simpleTypes.ContainsKey(property.Name))
+                    {
+                        throw new InvalidOperationException("DDI simpleTypes must have unique names: " + property.Name);
+                    }
+                    simpleTypes[property.Name] = property;
 
                 }
             }
+                        
+
+            ConvertAnyTypeToString();
+
+            ConvertPropertiesToPascalCase();
+
+            ConvertRestrictionsToSimpleTypes();
+
+            ExpandPropertyReferencesWithoutCommonBaseClass();
 
             CleanUp();
 
@@ -577,10 +716,151 @@ namespace DdiToCogs
             return 0;
         }
 
+        private void ProcessSimpleTypeFacets(XmlSchemaSimpleTypeRestriction simpleTypeRestriction, Property property)
+        {
+            foreach (var facet in simpleTypeRestriction.Facets)
+            {
+                if (facet is XmlSchemaPatternFacet pattern)
+                {
+                    property.Pattern = pattern.Value;
+                }
+                else if (facet is XmlSchemaMinLengthFacet minLength)
+                {
+                    property.MinLength = int.Parse(minLength.Value);
+                }
+                else if (facet is XmlSchemaMaxLengthFacet maxLength)
+                {
+                    property.MaxLength = int.Parse(maxLength.Value);
+                }
+                else if (facet is XmlSchemaMinExclusiveFacet minEx)
+                {
+                    property.MinExclusive = int.Parse(minEx.Value);
+                }
+                else if (facet is XmlSchemaMaxExclusiveFacet maxEx)
+                {
+                    property.MaxExclusive = int.Parse(maxEx.Value);
+                }
+                else if (facet is XmlSchemaMinInclusiveFacet minIn)
+                {
+                    property.MinInclusive = int.Parse(minIn.Value);
+                }
+                else if (facet is XmlSchemaMaxInclusiveFacet maxIn)
+                {
+                    property.MaxInclusive = int.Parse(maxIn.Value);
+                }
+                else if(facet is XmlSchemaEnumerationFacet enumeration)
+                {
+                    if(enumeration.Value.Contains(" "))
+                    {
+                        throw new InvalidOperationException("A simpleType enumeration contains a space");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(property.Enumeration))
+                    {
+                        property.Enumeration = enumeration.Value;
+                    }
+                    else
+                    {
+                        property.Enumeration += " " + enumeration.Value;
+                    }
+                }
+                else
+                {
+                    throw new InvalidOperationException("Unknown DDI simpleType facet for string");
+                }
+            }
+        }
+
+        public void ConvertPropertiesToPascalCase()
+        {
+            var dataTypeProperties = dataTypes.SelectMany(x => x.Value.Properties);
+            var itemProperties = items.SelectMany(x => x.Value.Properties);
+
+            foreach (var property in dataTypeProperties.Concat(itemProperties))
+            {
+                if (char.IsLower(property.Name[0]))
+                {
+                    property.Name = char.ToUpper(property.Name[0]) + property.Name.Substring(1); 
+                }
+            }
+        }
+
+        public void ConvertAnyTypeToString()
+        {
+            var dataTypeProperties = dataTypes.SelectMany(x => x.Value.Properties);
+            var itemProperties = items.SelectMany(x => x.Value.Properties);
+
+            foreach (var property in dataTypeProperties.Concat(itemProperties))
+            {
+                if (property.DataType == "anyType")
+                {
+                    property.DataType = "string";
+                }
+            }
+        }
+
+        public void ExpandPropertyReferencesWithoutCommonBaseClass()
+        {
+            foreach(var item in items.Values.Concat(dataTypes.Values))
+            {
+                for(int i = 0; i < item.Properties.Count; ++i)
+                {
+                    var property = item.Properties[i];
+                    if(property.DataType.Contains(" "))
+                    {
+                        var datatypes = property.DataType.Split(' ');
+                        item.Properties.RemoveAt(i);
+
+                        foreach(var datatype in datatypes)
+                        {
+                            Property exploded = property.Clone() as Property;
+                            exploded.Name = exploded.Name + "_" + datatype;
+                            exploded.DataType = datatype;
+                            item.Properties.Insert(i, exploded);
+                        }
+                    }
+                }
+            }            
+        }
+
+        public void ConvertRestrictionsToSimpleTypes()
+        {
+            var dataTypeProperties = dataTypes.SelectMany(x => x.Value.Properties);
+            var itemProperties = items.SelectMany(x => x.Value.Properties);
+
+            foreach(var property in dataTypeProperties.Concat(itemProperties))
+            {
+                if(simpleTypes.TryGetValue(property.DataType, out Property simpleType))
+                {
+                    property.DataType = simpleType.DataType;
+
+                    // simple string restrictions
+                    property.MinLength = simpleType.MinLength;
+                    property.MaxLength = simpleType.MaxLength;
+                    property.Enumeration = simpleType.Enumeration;
+                    property.Pattern = simpleType.Pattern;
+                    // numeric restrictions
+                    property.MinInclusive = simpleType.MinInclusive;
+                    property.MinExclusive = simpleType.MinExclusive;
+                    property.MaxInclusive = simpleType.MaxInclusive;
+                    property.MaxExclusive = simpleType.MaxExclusive;
+
+                    if(simpleType.MinCardinality != null)
+                    {
+                        property.MinCardinality = simpleType.MinCardinality;
+                    }
+                    if (simpleType.MaxCardinality != null)
+                    {
+                        property.MaxCardinality = simpleType.MaxCardinality;
+                    }
+                }
+            }
+        }
+
         public void CleanUp()
         {
-            var maintainable = items["MaintainableType"];
-            var versionable = items["VersionableType"];
+            var maintainable = items["Maintainable"];
+            var versionable = items["Versionable"];
             var identifiable = dataTypes["IdentifiableType"];
 
             var abstractMaintainable = dataTypes["AbstractMaintainableType"];
@@ -593,12 +873,84 @@ namespace DdiToCogs
             versionable.Extends = null;
             // keep the first 5 properties
             identifiable.Properties = identifiable.Properties.Take(5).ToList();
-            
+
+            maintainable.Extends = "Versionable";
+
             dataTypes.Remove("AbstractIdentifiableType");
             dataTypes.Remove("AbstractMaintainableType");
             dataTypes.Remove("AbstractVersionableType");
 
+         
+            // duplicate properties on one item
+            var datetype = dataTypes["DateType"];
+            datetype.Properties.RemoveAt(datetype.Properties.FindLastIndex(x => x.Name == "EndDate"));
+            datetype.Properties.RemoveAt(datetype.Properties.FindLastIndex(x => x.Name == "HistoricalEndDate"));
+
+            // duplicate property names across items
+            var dataTypeProperties = dataTypes.SelectMany(x => x.Value.Properties).ToList();
+            var itemProperties = items.SelectMany(x => x.Value.Properties).ToList();
+            var allProperties = dataTypeProperties.Concat(itemProperties).ToList();
             
+            var dupes2 = allProperties.Where(x => x.Name == "CodeListName").ToList();
+            foreach(var prop in dupes2)
+            {
+                if(prop.DataType != "NameType") { prop.Name += "_string"; }
+            }
+
+            var dupes = allProperties.Where(x => x.Name == "ArrayBase");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "int") { prop.Name += "_string"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "Interval");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "int") { prop.Name += "_IntervalType"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "RecordLayoutReference");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "RecordLayout") { prop.DataType = "RecordLayout"; }//use the other type
+            }
+
+            dupes = allProperties.Where(x => x.Name == "Value");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "ValueType") { prop.Name += "_string"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "CodeReference");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "CodeType") { prop.Name += "_string"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "StartDate");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "cogsDate") { prop.Name += "_dateTime"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "Anchor");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "AnchorType") { prop.Name += "_string"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "LevelName");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "NameType") { prop.Name += "_string"; }
+            }
+
+            dupes = allProperties.Where(x => x.Name == "DefaultValue");
+            foreach (var prop in dupes)
+            {
+                if (prop.DataType != "ValueType") { prop.Name += "_string"; }
+            }
+
         }
 
         private bool IsSchemaType(string schemaTypeName)
@@ -632,11 +984,25 @@ namespace DdiToCogs
             return false;
         }
 
+        private string GetTypeName(XmlQualifiedName qname)
+        {
+            string schemaTypeName = qname.Name;
+            
+            return GetTypeName(schemaTypeName);
+        }
         private string GetTypeName(string schemaTypeName)
         {
             var definedType = ddiSchema.GlobalTypes.Values.Cast<XmlSchemaType>().Where(x => x.QualifiedName.Name == schemaTypeName).FirstOrDefault();
             
-            if(definedType == null) { throw new InvalidOperationException("Invalid type lookup"); }
+            if(definedType == null)
+            {
+                string simpleType = ProcessSchemaTypeToSimpleType(schemaTypeName);
+                if(simpleType == null)
+                {
+                    throw new InvalidOperationException("Invalid type lookup");
+                }
+                return simpleType;
+            }
 
             var complexType = definedType as XmlSchemaComplexType;
             if(complexType != null)
@@ -702,9 +1068,16 @@ namespace DdiToCogs
                 File.WriteAllText(Path.Combine(settingsPath, "Identification.csv"), textWriter.ToString(), Encoding.UTF8);
             }
 
+            using (textWriter = new StringWriter())
+            {
+                csv = new CsvWriter(textWriter);
+                csv.WriteRecords(settings);
+                File.WriteAllText(Path.Combine(settingsPath, "Settings.csv"), textWriter.ToString(), Encoding.UTF8);
+            }
+
             foreach (var itemPair in items)
             {
-                string itemPath = Path.Combine(TargetDirectory, "ItemTypes", GetTypeName(itemPair.Key));
+                string itemPath = Path.Combine(TargetDirectory, "ItemTypes", itemPair.Key);
                 Directory.CreateDirectory(itemPath);
 
                 Item item = itemPair.Value;
@@ -717,12 +1090,12 @@ namespace DdiToCogs
                 {
                     csv = new CsvWriter(textWriter);
                     csv.WriteRecords(item.Properties);
-                    File.WriteAllText(Path.Combine(itemPath, GetTypeName(item.Name) + ".csv"), textWriter.ToString(), Encoding.UTF8);
+                    File.WriteAllText(Path.Combine(itemPath, item.Name + ".csv"), textWriter.ToString(), Encoding.UTF8);
                 }
 
                 if(item.Extends != null)
                 {
-                    string extendsFile = Path.Combine(itemPath, "Extends." + GetTypeName(item.Extends));
+                    string extendsFile = Path.Combine(itemPath, "Extends." + item.Extends);
                     File.Create(extendsFile).Dispose();
                 }
                 if (item.IsAbstract)
@@ -740,7 +1113,7 @@ namespace DdiToCogs
                 
             }
 
-            string typesPath = Path.Combine(TargetDirectory, "ReusableTypes");
+            string typesPath = Path.Combine(TargetDirectory, "CompositeTypes");
             Directory.CreateDirectory(typesPath);
             
 
@@ -777,6 +1150,16 @@ namespace DdiToCogs
                 dataTypesUsed.UnionWith(GetParentTypes(dataType.Name));
             }
 
+            // Topics are hard coded, to create an example
+            string topicsPath = Path.Combine(TargetDirectory, "Topics");
+            Directory.CreateDirectory(topicsPath);
+            File.WriteAllText(Path.Combine(topicsPath, "index.txt"), "All Content Items");
+
+            string allContentPath = Path.Combine(topicsPath, "All Content Items");
+            Directory.CreateDirectory(allContentPath);
+            File.Create(Path.Combine(allContentPath, "readme.markdown")).Dispose();
+            var usedItemList = items.Where(x => !x.Value.IsAbstract).Select(x => x.Key);
+            File.WriteAllLines(Path.Combine(allContentPath, "items.txt"), usedItemList);
 
             // find reusable data types that are not used or base classes of a used datatype
 
@@ -874,6 +1257,15 @@ namespace DdiToCogs
             File.WriteAllText(output, doc.ToString(), Encoding.UTF8);
         }
 
+        List<Setting> settings = new List<Setting>()
+        {
+            new Setting() {Key="Title", Value="DDI Data Documentation"},
+            new Setting() {Key="ShortTitle", Value="DDI"},
+            new Setting() {Key="Slug", Value="ddi"},
+            new Setting() {Key="Description", Value="The Data Documentation Initiative (DDI) is an international standard for describing the data produced by surveys and other observational methods in the social, behavioral, economic, and health sciences. DDI is a free standard that can document and manage different stages in the research data lifecycle, such as conceptualization, collection, processing, distribution, discovery, and archiving. Documenting data with DDI facilitates understanding, interpretation, and use -- by people, software systems, and computer networks."},
+            new Setting() {Key="NamespaceUrl", Value="http://ddialliance.org/ddi"},
+            new Setting() {Key="NamespacePrefix", Value="ddi"}
+        };
 
         List<Property> identification = new List<Property>() {
             new Property()

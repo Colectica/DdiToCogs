@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Colectica.Cogs.Data
 {
-    public class Property
+    public class Property : ICloneable
     {
         public string Name { get; set; }
 
@@ -30,9 +30,16 @@ namespace Colectica.Cogs.Data
         public string DeprecatedElementOrAttribute { get; set; }
         public string DeprecatedChoiceGroup { get; set; }
 
+        public object Clone()
+        {
+            return this.MemberwiseClone();
+        }
+
         public override string ToString()
         {
             return $"{Name} - {DataType} - {MinCardinality}..{MaxCardinality}";
         }
+
+
     }
 }

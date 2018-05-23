@@ -132,17 +132,18 @@ namespace DdiToCogs
                 }
                 
             }
-
             
-
-
             if (isItem)
             {
                 if (items.ContainsKey(dataType.Name))
                 {
                     throw new InvalidOperationException("DDI items must have unique names: " + dataType.Name);
                 }
-                items[dataType.Name] = dataType as Item;
+                else
+                {
+                    items[dataType.Name] = dataType as Item;
+                }
+                
             }
             else
             {                
@@ -150,7 +151,10 @@ namespace DdiToCogs
                 {
                     throw new InvalidOperationException("DDI dataTypes must have unique names: " + dataType.Name);
                 }
-                dataTypes[dataType.Name] = dataType;                
+                else
+                {
+                    dataTypes[dataType.Name] = dataType;
+                }                       
             }
 
 
@@ -212,6 +216,17 @@ namespace DdiToCogs
                     p.DataType = GetTypeName(attribute.AttributeSchemaType.QualifiedName);
                     
                     p.Name = attribute.QualifiedName.Name;
+
+                    // hypens not allowed
+                    int hyphen = p.Name.IndexOf('-');
+                    if(hyphen >= 0)
+                    {
+                        StringBuilder sb = new StringBuilder(p.Name);
+                        sb.Remove(hyphen, 1);
+                        sb[hyphen] = char.ToUpperInvariant(sb[hyphen]);
+                        p.Name = sb.ToString();                        
+                    }
+
                     p.MinCardinality = "0";
                     if (attribute.Use == XmlSchemaUse.Optional)
                     {
@@ -497,6 +512,15 @@ namespace DdiToCogs
             p.DataType = GetTypeName(element.ElementSchemaType.QualifiedName);
 
             p.Name = element.QualifiedName.Name;
+            // hypens not allowed
+            int hyphen = p.Name.IndexOf('-');
+            if (hyphen >= 0)
+            {
+                StringBuilder sb = new StringBuilder(p.Name);
+                sb.Remove(hyphen, 1);
+                sb[hyphen] = char.ToUpperInvariant(sb[hyphen]);
+                p.Name = sb.ToString();
+            }
 
             p.MinCardinality = element.MinOccursString;
             p.MaxCardinality = element.MaxOccursString;
@@ -573,6 +597,13 @@ namespace DdiToCogs
                 {
                     continue;
                 }
+                if (definedType.QualifiedName.Namespace == "ddi:physicaldataproduct_ncube_inline:3_3" ||
+                    definedType.QualifiedName.Namespace == "ddi:physicaldataproduct_ncube_normal:3_3" ||
+                    definedType.QualifiedName.Namespace == "ddi:physicaldataproduct_ncube_tabular:3_3" ||
+                    definedType.QualifiedName.Namespace == "ddi:physicaldataproduct_proprietary:3_3")
+                {
+                    continue;
+                }
 
                 // handle inclusion of DC terms within COGS itself
                 if (definedType.QualifiedName.Namespace == "http://purl.org/dc/elements/1.1/" ||
@@ -613,6 +644,15 @@ namespace DdiToCogs
                 {
                     Property property = new Property();
                     property.Name = simpleType.QualifiedName.Name;
+                    // hypens not allowed
+                    int hyphen = property.Name.IndexOf('-');
+                    if (hyphen >= 0)
+                    {
+                        StringBuilder sb = new StringBuilder(property.Name);
+                        sb.Remove(hyphen, 1);
+                        sb[hyphen] = char.ToUpperInvariant(sb[hyphen]);
+                        property.Name = sb.ToString();
+                    }
                     property.DeprecatedNamespace = simpleType.QualifiedName.Namespace;
 
                     // annotations are not consistent across the schemas
@@ -1013,7 +1053,7 @@ namespace DdiToCogs
                 {
                     if (schemaTypeName.EndsWith("Type"))
                     {
-                        return schemaTypeName.Substring(0, schemaTypeName.LastIndexOf("Type"));
+                        schemaTypeName = schemaTypeName.Substring(0, schemaTypeName.LastIndexOf("Type"));
                     }
                 }
             }
@@ -1054,6 +1094,22 @@ namespace DdiToCogs
                 csv = new CsvWriter(textWriter);
                 csv.WriteRecords(unknownTypedReference);
                 File.WriteAllText(Path.Combine(TargetDirectory, "unknownTypedReference.csv"), textWriter.ToString(), Encoding.UTF8);
+            }
+
+            var notDefined = new List<TypedReference>(unknownTypedReference);
+            foreach(var defined in loadedTypedReference)
+            {
+                notDefined.RemoveAll(x =>
+                x.ParentTypeName == defined.ParentTypeName &&
+                x.ReferenceName == defined.ReferenceName &&
+                !string.IsNullOrWhiteSpace(defined.ItemTypeName)
+                );
+            }
+            using (textWriter = new StringWriter())
+            {
+                csv = new CsvWriter(textWriter);
+                csv.WriteRecords(notDefined);
+                File.WriteAllText(Path.Combine(TargetDirectory, "notDefinedTypedReference.csv"), textWriter.ToString(), Encoding.UTF8);
             }
 
             HashSet<string> dataTypesUsed = new HashSet<string>();
@@ -1259,12 +1315,13 @@ namespace DdiToCogs
 
         List<Setting> settings = new List<Setting>()
         {
-            new Setting() {Key="Title", Value="DDI Data Documentation"},
-            new Setting() {Key="ShortTitle", Value="DDI"},
+            new Setting() {Key="Title", Value="DDI Data Documentation 3.3"},
+            new Setting() {Key="ShortTitle", Value="DDI33"},
             new Setting() {Key="Slug", Value="ddi"},
             new Setting() {Key="Description", Value="The Data Documentation Initiative (DDI) is an international standard for describing the data produced by surveys and other observational methods in the social, behavioral, economic, and health sciences. DDI is a free standard that can document and manage different stages in the research data lifecycle, such as conceptualization, collection, processing, distribution, discovery, and archiving. Documenting data with DDI facilitates understanding, interpretation, and use -- by people, software systems, and computer networks."},
             new Setting() {Key="NamespaceUrl", Value="http://ddialliance.org/ddi"},
-            new Setting() {Key="NamespacePrefix", Value="ddi"}
+            new Setting() {Key="NamespacePrefix", Value="ddi"},
+            new Setting() {Key="CSharpNamespace", Value="Ddi.Model" }
         };
 
         List<Property> identification = new List<Property>() {

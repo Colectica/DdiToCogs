@@ -907,14 +907,16 @@ namespace DdiToCogs
             var abstractVersionable = dataTypes["AbstractVersionableType"];
             var abstractIdentifiable = dataTypes["AbstractIdentifiableType"];
             
-            // add userid to versionable, identification will be injected
-            var userId = abstractIdentifiable.Properties.Where(x => x.Name == "UserID").FirstOrDefault();
-            versionable.Properties.Insert(0, userId);
+                        
+            // keep the first 6 properties
+            identifiable.Properties = abstractIdentifiable.Properties.Take(6).ToList();
+
+            // skip the 4 identifier parts, it will be injected
+            versionable.Properties = identifiable.Properties.Skip(4).Concat(abstractVersionable.Properties).ToList();
             versionable.Extends = null;
-            // keep the first 5 properties
-            identifiable.Properties = identifiable.Properties.Take(5).ToList();
 
             maintainable.Extends = "Versionable";
+            maintainable.Properties = abstractMaintainable.Properties;
 
             dataTypes.Remove("AbstractIdentifiableType");
             dataTypes.Remove("AbstractMaintainableType");

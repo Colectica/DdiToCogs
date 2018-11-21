@@ -9,13 +9,13 @@
             Represents errors that occur due to bad data.
             </summary>
         </member>
-        <member name="M:CsvHelper.BadDataException.#ctor(CsvHelper.IReadingContext)">
+        <member name="M:CsvHelper.BadDataException.#ctor(CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.BadDataException"/> class.
             </summary>
             <param name="context">The reading context.</param>
         </member>
-        <member name="M:CsvHelper.BadDataException.#ctor(CsvHelper.IReadingContext,System.String)">
+        <member name="M:CsvHelper.BadDataException.#ctor(CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.BadDataException"/> class
             with a specified error message.
@@ -23,7 +23,7 @@
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.BadDataException.#ctor(CsvHelper.IReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.BadDataException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.BadDataException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -68,6 +68,329 @@
             Raw record.
             </summary>
         </member>
+        <member name="T:CsvHelper.Configuration.Attributes.BooleanFalseValuesAttribute">
+            <summary>
+            The string values used to represent a boolean false when converting.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.BooleanFalseValuesAttribute.FalseValues">
+            <summary>
+            Gets the false values.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.BooleanFalseValuesAttribute.#ctor(System.String)">
+            <summary>
+            The string values used to represent a boolean false when converting.
+            </summary>
+            <param name="falseValue">The false values.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.BooleanFalseValuesAttribute.#ctor(System.String[])">
+            <summary>
+            The string values used to represent a boolean false when converting.
+            </summary>
+            <param name="falseValues">The false values.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.BooleanTrueValuesAttribute">
+            <summary>
+            The string values used to represent a boolean true when converting.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.BooleanTrueValuesAttribute.TrueValues">
+            <summary>
+            Gets the true values.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.BooleanTrueValuesAttribute.#ctor(System.String)">
+            <summary>
+            The string values used to represent a boolean true when converting.
+            </summary>
+            <param name="trueValue"></param>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.BooleanTrueValuesAttribute.#ctor(System.String[])">
+            <summary>
+            The string values used to represent a boolean true when converting.
+            </summary>
+            <param name="trueValues"></param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.ConstantAttribute">
+            <summary>
+            The constant value that will be used for every record when 
+            reading and writing. This value will always be used no matter 
+            what other mapping configurations are specified.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.ConstantAttribute.Constant">
+            <summary>
+            Gets the constant.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.ConstantAttribute.#ctor(System.Object)">
+            <summary>
+            The constant value that will be used for every record when 
+            reading and writing. This value will always be used no matter 
+            what other mapping configurations are specified.
+            </summary>
+            <param name="constant">The constant.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.CultureInfoAttribute">
+            <summary>
+            The <see cref="P:CsvHelper.Configuration.Attributes.CultureInfoAttribute.CultureInfo"/> used when type converting.
+            This will override the global <see cref="P:CsvHelper.Configuration.Configuration.CultureInfo"/>
+            setting.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.CultureInfoAttribute.CultureInfo">
+            <summary>
+            Gets the culture info.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.CultureInfoAttribute.#ctor(System.String)">
+            <summary>
+            The <see cref="P:CsvHelper.Configuration.Attributes.CultureInfoAttribute.CultureInfo"/> used when type converting.
+            This will override the global <see cref="P:CsvHelper.Configuration.Configuration.CultureInfo"/>
+            setting.
+            </summary>
+            <param name="culture">The culture.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.DateTimeStylesAttribute">
+            <summary>
+            The <see cref="P:CsvHelper.Configuration.Attributes.DateTimeStylesAttribute.DateTimeStyles"/> to use when type converting.
+            This is used when doing any <see cref="T:System.DateTime"/> conversions.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.DateTimeStylesAttribute.DateTimeStyles">
+            <summary>
+            Gets the date time styles.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.DateTimeStylesAttribute.#ctor(System.Globalization.DateTimeStyles)">
+            <summary>
+            The <see cref="P:CsvHelper.Configuration.Attributes.DateTimeStylesAttribute.DateTimeStyles"/> to use when type converting.
+            This is used when doing any <see cref="T:System.DateTime"/> conversions.
+            </summary>
+            <param name="dateTimeStyles">The date time styles.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.DefaultAttribute">
+            <summary>
+            The default value that will be used when reading when
+            the CSV field is empty.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.DefaultAttribute.Default">
+            <summary>
+            Gets the default value.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.DefaultAttribute.#ctor(System.Object)">
+            <summary>
+            The default value that will be used when reading when
+            the CSV field is empty.
+            </summary>
+            <param name="defaultValue">The default value</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.FormatAttribute">
+            <summary>
+            The string format to be used when type converting.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.FormatAttribute.Formats">
+            <summary>
+            Gets the formats.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.FormatAttribute.#ctor(System.String)">
+            <summary>
+            The string format to be used when type converting.
+            </summary>
+            <param name="format">The format.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.FormatAttribute.#ctor(System.String[])">
+            <summary>
+            The string format to be used when type converting.
+            </summary>
+            <param name="formats">The formats.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.HeaderPrefixAttribute">
+            <summary>
+            Appends a prefix to the header of each field of the reference member.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.HeaderPrefixAttribute.Prefix">
+            <summary>
+            Gets the prefix.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.HeaderPrefixAttribute.#ctor">
+            <summary>
+            Appends a prefix to the header of each field of the reference member.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.HeaderPrefixAttribute.#ctor(System.String)">
+            <summary>
+            Appends a prefix to the header of each field of the reference member.
+            </summary>
+            <param name="prefix">The prefix.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.IgnoreAttribute">
+            <summary>
+            Ignore the member when reading and writing.
+            If this member has already been mapped as a reference
+            member, either by a class map, or by automapping, calling
+            this method will not ingore all the child members down the
+            tree that have already been mapped.
+            </summary>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.IndexAttribute">
+            <summary>
+            When reading, is used to get the field at
+            the given index. When writing, the fields
+            will be written in the order of the field
+            indexes.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.IndexAttribute.Index">
+            <summary>
+            Gets the index.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.IndexAttribute.IndexEnd">
+            <summary>
+            Gets the index end.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.IndexAttribute.#ctor(System.Int32,System.Int32)">
+            <summary>
+            When reading, is used to get the field at
+            the given index. When writing, the fields
+            will be written in the order of the field
+            indexes.
+            </summary>
+            <param name="index">The index.</param>
+            <param name="indexEnd">The index end.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.NameAttribute">
+            <summary>
+            When reading, is used to get the field
+            at the index of the name if there was a
+            header specified. It will look for the
+            first name match in the order listed.
+            When writing, sets the name of the 
+            field in the header record.
+            The first name will be used.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.NameAttribute.Names">
+            <summary>
+            Gets the names.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.NameAttribute.#ctor(System.String)">
+            <summary>
+            When reading, is used to get the field
+            at the index of the name if there was a
+            header specified. It will look for the
+            first name match in the order listed.
+            When writing, sets the name of the 
+            field in the header record.
+            The first name will be used.
+            </summary>
+            <param name="name">The name</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.NameAttribute.#ctor(System.String[])">
+            <summary>
+            When reading, is used to get the field
+            at the index of the name if there was a
+            header specified. It will look for the
+            first name match in the order listed.
+            When writing, sets the name of the 
+            field in the header record.
+            The first name will be used.
+            </summary>
+            <param name="names">The names.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.NameIndexAttribute">
+            <summary>
+            When reading, is used to get the 
+            index of the name used when there 
+            are multiple names that are the same.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.NameIndexAttribute.NameIndex">
+            <summary>
+            The name index.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.NameIndexAttribute.#ctor(System.Int32)">
+            <summary>
+            When reading, is used to get the 
+            index of the name used when there 
+            are multiple names that are the same.
+            </summary>
+            <param name="nameIndex">The name index.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.NullValuesAttribute">
+            <summary>
+            The string values used to represent null when converting.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.NullValuesAttribute.NullValues">
+            <summary>
+            Gets the null values.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.NullValuesAttribute.#ctor(System.String)">
+            <summary>
+            The string values used to represent null when converting.
+            </summary>
+            <param name="nullValue">The null values.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.NullValuesAttribute.#ctor(System.String[])">
+            <summary>
+            The string values used to represent null when converting.
+            </summary>
+            <param name="nullValues">The null values.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.NumberStylesAttribute">
+            <summary>
+            The <see cref="P:CsvHelper.Configuration.Attributes.NumberStylesAttribute.NumberStyles"/> to use when type converting.
+            This is used when doing any number conversions.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.NumberStylesAttribute.NumberStyles">
+            <summary>
+            Gets the number styles.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.NumberStylesAttribute.#ctor(System.Globalization.NumberStyles)">
+            <summary>
+            The <see cref="P:CsvHelper.Configuration.Attributes.NumberStylesAttribute.NumberStyles"/> to use when type converting.
+            This is used when doing any number conversions.
+            </summary>
+            <param name="numberStyles">The number styles.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.OptionalAttribute">
+            <summary>
+            Ignore the member when reading if no matching field name can be found.
+            </summary>
+        </member>
+        <member name="T:CsvHelper.Configuration.Attributes.TypeConverterAttribute">
+            <summary>
+            Specifies the <see cref="P:CsvHelper.Configuration.Attributes.TypeConverterAttribute.TypeConverter"/> to use
+            when converting the member to and from a CSV field.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.Attributes.TypeConverterAttribute.TypeConverter">
+            <summary>
+            Gets the type converter.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.Attributes.TypeConverterAttribute.#ctor(System.Type)">
+            <summary>
+            Specifies the <see cref="P:CsvHelper.Configuration.Attributes.TypeConverterAttribute.TypeConverter"/> to use
+            when converting the member to and from a CSV field.
+            </summary>
+            <param name="typeConverterType"></param>
+        </member>
         <member name="T:CsvHelper.Configuration.ClassMap">
             <summary>
              Maps class members to CSV fields.
@@ -76,11 +399,6 @@
         <member name="P:CsvHelper.Configuration.ClassMap.ClassType">
             <summary>
             The type of the class this map is for.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.Configuration.ClassMap.Constructor">
-            <summary>
-            Gets the constructor expression.
             </summary>
         </member>
         <member name="P:CsvHelper.Configuration.ClassMap.ParameterMaps">
@@ -190,6 +508,18 @@
             Gets the generic type for this class map.
             </summary>
         </member>
+        <member name="M:CsvHelper.Configuration.ClassMap.ApplyAttributes(CsvHelper.Configuration.MemberMap)">
+            <summary>
+            Applies attribute configurations to the map.
+            </summary>
+            <param name="memberMap">The member map.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.ClassMap.ApplyAttributes(CsvHelper.Configuration.MemberReferenceMap)">
+            <summary>
+            Applies attribute configurations to the map.
+            </summary>
+            <param name="referenceMap">The reference map.</param>
+        </member>
         <member name="T:CsvHelper.Configuration.IHasMap`1">
             <summary>
             Has mapping capabilities.
@@ -261,6 +591,25 @@
         <member name="T:CsvHelper.Configuration.IHasIndexOptions`2">
             <summary>
             Options after an index call.
+            </summary>
+            <typeparam name="TClass">The class type.</typeparam>
+            <typeparam name="TMember">The member type.</typeparam>
+        </member>
+        <member name="T:CsvHelper.Configuration.IHasOptional`2">
+            <summary>
+            Has optional capabilities.
+            </summary>
+            <typeparam name="TClass">The class type.</typeparam>
+            <typeparam name="TMember">The member type.</typeparam>
+        </member>
+        <member name="M:CsvHelper.Configuration.IHasOptional`2.Optional">
+            <summary>
+            Ignore the member when reading if no matching field name can be found.
+            </summary>
+        </member>
+        <member name="T:CsvHelper.Configuration.IHasOptionalOptions`2">
+            <summary>
+            Options after an optional call.
             </summary>
             <typeparam name="TClass">The class type.</typeparam>
             <typeparam name="TMember">The member type.</typeparam>
@@ -480,12 +829,6 @@
             Creates an instance of <see cref="T:CsvHelper.Configuration.ClassMap`1"/>.
             </summary>
         </member>
-        <member name="M:CsvHelper.Configuration.ClassMap`1.ConstructUsing(System.Linq.Expressions.Expression{System.Func{`0}})">
-            <summary>
-            Constructs the row object using the given expression.
-            </summary>
-            <param name="expression">The expression.</param>
-        </member>
         <member name="M:CsvHelper.Configuration.ClassMap`1.Map``1(System.Linq.Expressions.Expression{System.Func{`0,``0}},System.Boolean)">
             <summary>
             Maps a member to a CSV field.
@@ -497,7 +840,10 @@
         </member>
         <member name="M:CsvHelper.Configuration.ClassMap`1.References``1(System.Linq.Expressions.Expression{System.Func{`0,System.Object}},System.Object[])">
             <summary>
-            Maps a member to another class map.
+            Meant for internal use only. 
+            Maps a member to another class map. When this is used, accessing a property through
+            sub-property mapping later won't work. You can only use one or the other. When using
+            this, ConvertUsing will also not work.
             </summary>
             <typeparam name="TClassMap">The type of the class map.</typeparam>
             <param name="expression">The expression.</param>
@@ -719,7 +1065,7 @@
         <member name="P:CsvHelper.Configuration.Configuration.IgnoreQuotes">
             <summary>
             Gets or sets a value indicating if quotes should be
-            ingored when parsing and treated like any other character.
+            ignored when parsing and treated like any other character.
             </summary>
         </member>
         <member name="P:CsvHelper.Configuration.Configuration.IncludePrivateMembers">
@@ -743,12 +1089,10 @@
             True to ignore, otherwise false. Default is true.
             </summary>
         </member>
-        <member name="P:CsvHelper.Configuration.Configuration.PrefixReferenceHeaders">
+        <member name="P:CsvHelper.Configuration.Configuration.ReferenceHeaderPrefix">
             <summary>
-            Gets or sets a value indicating if headers of reference
-            member should get prefixed by the parent member
-            name when automapping.
-            True to prefix, otherwise false. Default is false.
+            Gets or sets a callback that will return the prefix for a reference header.
+            Arguments: memberType, memberName
             </summary>
         </member>
         <member name="P:CsvHelper.Configuration.Configuration.BuildRequiredQuoteChars">
@@ -853,6 +1197,57 @@
             </summary>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="T:CsvHelper.Configuration.ConfigurationFunctions">
+            <summary>Holds the default callback methods for delegate members of <c>CsvHelper.Configuration.Configuration</c>.</summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.HeaderValidated(System.Boolean,System.String[],System.Int32,CsvHelper.ReadingContext)">
+            <summary>
+            Throws a <see cref="T:CsvHelper.ValidationException"/> if <paramref name="isValid"/> is <c>false</c>.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.MissingFieldFound(System.String[],System.Int32,CsvHelper.ReadingContext)">
+            <summary>
+            Throws a <c>MissingFieldException</c>.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.BadDataFound(CsvHelper.ReadingContext)">
+            <summary>
+            Throws a <see cref="T:CsvHelper.BadDataException"/>.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.ReadingExceptionOccurred(CsvHelper.CsvHelperException)">
+            <summary>
+            Throws the given <paramref name="exception"/>.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.ShouldSkipRecord(System.String[])">
+            <summary>
+            Returns <c>false</c>.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.PrepareHeaderForMatch(System.String)">
+            <summary>
+            Returns the <paramref name="header"/> as given.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.ShouldUseConstructorParameters(System.Type)">
+            <summary>
+            Returns <c>true</c> if <paramref name="type"/>:
+            1. does not have a parameterless constructor
+            2. has a constructor
+            3. is not a user defined struct
+            4. is not an interface
+            5. TypeCode is not an Object.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.ConfigurationFunctions.GetConstructor(System.Type)">
+            <summary>
+            Returns the type's constructor with the most parameters. 
+            If two constructors have the same number of parameters, then
+            there is no guarantee which one will be returned. If you have
+            that situation, you should probably implement this function yourself.
+            </summary>
         </member>
         <member name="T:CsvHelper.Configuration.DefaultClassMap`1">
             <summary>
@@ -1008,6 +1403,13 @@
             Chooses the constructor to use for constuctor mapping.
             </summary>
         </member>
+        <member name="P:CsvHelper.Configuration.IReaderConfiguration.IgnoreReferences">
+            <summary>
+            Gets or sets a value indicating whether references
+            should be ignored when auto mapping. True to ignore
+            references, otherwise false. Default is false.
+            </summary>
+        </member>
         <member name="P:CsvHelper.Configuration.IReaderConfiguration.ShouldSkipRecord">
             <summary>
             Gets or sets the callback that will be called to
@@ -1021,12 +1423,10 @@
             True to include private member, otherwise false. Default is false.
             </summary>
         </member>
-        <member name="P:CsvHelper.Configuration.IReaderConfiguration.PrefixReferenceHeaders">
+        <member name="P:CsvHelper.Configuration.IReaderConfiguration.ReferenceHeaderPrefix">
             <summary>
-            Gets or sets a value indicating if headers of reference
-            member should get prefixed by the parent member name 
-            when automapping.
-            True to prefix, otherwise false. Default is false.
+            Gets or sets a callback that will return the prefix for a reference header.
+            Arguments: memberType, memberName
             </summary>
         </member>
         <member name="P:CsvHelper.Configuration.IReaderConfiguration.DetectColumnCountChanges">
@@ -1230,6 +1630,13 @@
             Default is true.
             </summary>
         </member>
+        <member name="P:CsvHelper.Configuration.IWriterConfiguration.IgnoreReferences">
+            <summary>
+            Gets or sets a value indicating whether references
+            should be ignored when auto mapping. True to ignore
+            references, otherwise false. Default is false.
+            </summary>
+        </member>
         <member name="P:CsvHelper.Configuration.IWriterConfiguration.IncludePrivateMembers">
             <summary>
             Gets or sets a value indicating if private
@@ -1237,12 +1644,10 @@
             True to include private member, otherwise false. Default is false.
             </summary>
         </member>
-        <member name="P:CsvHelper.Configuration.IWriterConfiguration.PrefixReferenceHeaders">
+        <member name="P:CsvHelper.Configuration.IWriterConfiguration.ReferenceHeaderPrefix">
             <summary>
-            Gets or sets a value indicating if headers of reference
-            member should get prefixed by the parent member name 
-            when automapping.
-            True to prefix, otherwise false. Default is false.
+            Gets or sets a callback that will return the prefix for a reference header.
+            Arguments: memberType, memberName
             </summary>
         </member>
         <member name="P:CsvHelper.Configuration.IWriterConfiguration.MemberTypes">
@@ -1402,6 +1807,100 @@
             </summary>
             <param name="classType">Type of the class the member being mapped belongs to.</param>
             <param name="member">The member being mapped.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Name(System.String[])">
+            <summary>
+            When reading, is used to get the field
+            at the index of the name if there was a
+            header specified. It will look for the
+            first name match in the order listed.
+            When writing, sets the name of the 
+            field in the header record.
+            The first name will be used.
+            </summary>
+            <param name="names">The possible names of the CSV field.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.NameIndex(System.Int32)">
+            <summary>
+            When reading, is used to get the 
+            index of the name used when there 
+            are multiple names that are the same.
+            </summary>
+            <param name="index">The index of the name.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Index(System.Int32,System.Int32)">
+            <summary>
+            When reading, is used to get the field at
+            the given index. When writing, the fields
+            will be written in the order of the field
+            indexes.
+            </summary>
+            <param name="index">The index of the CSV field.</param>
+            <param name="indexEnd">The end index used when mapping to an <see cref="T:System.Collections.IEnumerable"/> member.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Ignore">
+            <summary>
+            Ignore the member when reading and writing.
+            If this member has already been mapped as a reference
+            member, either by a class map, or by automapping, calling
+            this method will not ingore all the child members down the
+            tree that have already been mapped.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Ignore(System.Boolean)">
+            <summary>
+            Ignore the member when reading and writing.
+            If this member has already been mapped as a reference
+            member, either by a class map, or by automapping, calling
+            this method will not ingore all the child members down the
+            tree that have already been mapped.
+            </summary>
+            <param name="ignore">True to ignore, otherwise false.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Default(System.Object)">
+            <summary>
+            The default value that will be used when reading when
+            the CSV field is empty.
+            </summary>
+            <param name="defaultValue">The default value.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Default(System.String)">
+            <summary>
+            The default value that will be used when reading when
+            the CSV field is empty. This value is not type checked
+            and will use a <see cref="T:CsvHelper.TypeConversion.ITypeConverter"/> to convert
+            the field. This could potentially have runtime errors.
+            </summary>
+            <param name="defaultValue">The default value.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Constant(System.Object)">
+            <summary>
+            The constant value that will be used for every record when 
+            reading and writing. This value will always be used no matter 
+            what other mapping configurations are specified.
+            </summary>
+            <param name="constantValue">The constant value.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.TypeConverter(CsvHelper.TypeConversion.ITypeConverter)">
+            <summary>
+            Specifies the <see cref="M:CsvHelper.Configuration.MemberMap.TypeConverter(CsvHelper.TypeConversion.ITypeConverter)"/> to use
+            when converting the member to and from a CSV field.
+            </summary>
+            <param name="typeConverter">The TypeConverter to use.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.TypeConverter``1">
+            <summary>
+            Specifies the <see cref="M:CsvHelper.Configuration.MemberMap.TypeConverter(CsvHelper.TypeConversion.ITypeConverter)"/> to use
+            when converting the member to and from a CSV field.
+            </summary>
+            <typeparam name="TConverter">The <see cref="T:System.Type"/> of the 
+            <see cref="M:CsvHelper.Configuration.MemberMap.TypeConverter(CsvHelper.TypeConversion.ITypeConverter)"/> to use.</typeparam>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap.Validate(System.Func{System.String,System.Boolean})">
+            <summary>
+            Specifies an expression to be used to validate a field when reading.
+            </summary>
+            <param name="validateExpression"></param>
         </member>
         <member name="T:CsvHelper.Configuration.MemberMapCollection">
             <summary>
@@ -1695,7 +2194,7 @@
         </member>
         <member name="P:CsvHelper.Configuration.MemberMapData.IsConstantSet">
             <summary>
-            
+            Gets or sets a value indicating if a constant was explicitly set.
             </summary>
         </member>
         <member name="P:CsvHelper.Configuration.MemberMapData.ReadingConvertExpression">
@@ -1713,6 +2212,11 @@
         <member name="P:CsvHelper.Configuration.MemberMapData.ValidateExpression">
             <summary>
             Gets or sets the expression use to validate a field.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.Configuration.MemberMapData.IsOptional">
+            <summary>
+            Gets or sets a value indicating if a field is optional.
             </summary>
         </member>
         <member name="M:CsvHelper.Configuration.MemberMapData.#ctor(System.Reflection.MemberInfo)">
@@ -1832,6 +2336,11 @@
             to a field.
             </summary>
             <param name="convertExpression">The convert expression.</param>
+        </member>
+        <member name="M:CsvHelper.Configuration.MemberMap`2.Optional">
+            <summary>
+            Ignore the member when reading if no matching field name can be found.
+            </summary>
         </member>
         <member name="M:CsvHelper.Configuration.MemberMap`2.Validate(System.Func{System.String,System.Boolean})">
             <summary>
@@ -2289,6 +2798,12 @@
             Appends the current reading progress.
             </summary>
         </member>
+        <member name="M:CsvHelper.CsvFieldReader.SetBufferPosition(System.Int32)">
+            <summary>
+            Move's the buffer position according to the given offset.
+            </summary>
+            <param name="offset">The offset to move the buffer.</param>
+        </member>
         <member name="M:CsvHelper.CsvFieldReader.SetFieldStart(System.Int32)">
             <summary>
             Sets the start of the field to the current buffer position.
@@ -2362,17 +2877,17 @@
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         </member>
-        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.IReadingContext)">
+        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.CsvHelperException"/> class.
             </summary>
         </member>
-        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.IWritingContext)">
+        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.WritingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.CsvHelperException"/> class.
             </summary>
         </member>
-        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.IReadingContext,System.String)">
+        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.CsvHelperException"/> class
             with a specified error message.
@@ -2380,7 +2895,7 @@
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.IReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.CsvHelperException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -2390,7 +2905,7 @@
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         </member>
-        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.IWritingContext,System.String)">
+        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.WritingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.CsvHelperException"/> class
             with a specified error message.
@@ -2398,7 +2913,7 @@
             <param name="context">The writing context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.IWritingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.CsvHelperException.#ctor(CsvHelper.WritingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.CsvHelperException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -2631,7 +3146,7 @@
         </member>
         <member name="M:CsvHelper.CsvReader.ReadHeader">
             <summary>
-            Reads the header field without reading the first row.
+            Reads the header record without reading the first row.
             </summary>
             <returns>True if there are more records, otherwise false.</returns>
         </member>
@@ -3102,13 +3617,14 @@
             <exception cref="T:CsvHelper.ReaderException">Thrown if there is no header record.</exception>
             <exception cref="T:CsvHelper.MissingFieldException">Thrown if there isn't a field with name.</exception>
         </member>
-        <member name="M:CsvHelper.CsvReader.GetFieldIndex(System.String[],System.Int32,System.Boolean)">
+        <member name="M:CsvHelper.CsvReader.GetFieldIndex(System.String[],System.Int32,System.Boolean,System.Boolean)">
             <summary>
             Gets the index of the field at name if found.
             </summary>
             <param name="names">The possible names of the field to get the index for.</param>
             <param name="index">The index of the field if there are multiple fields with the same name.</param>
             <param name="isTryGet">A value indicating if the call was initiated from a TryGet.</param>
+            <param name="isOptional">A value indicating if the call was initiated for an optional field.</param>
             <returns>The index of the field if found, otherwise -1.</returns>
             <exception cref="T:CsvHelper.ReaderException">Thrown if there is no header record.</exception>
             <exception cref="T:CsvHelper.MissingFieldException">Thrown if there isn't a field with name.</exception>
@@ -3263,7 +3779,7 @@
             Creates a new CSV writer using the given <see cref="T:System.IO.TextWriter"/>.
             </summary>
             <param name="writer">The writer used to write the CSV file.</param>
-            <param name="leaveOpen">true to leave the reader open after the CsvReader object is disposed, otherwise false.</param>
+            <param name="leaveOpen">true to leave the writer open after the CsvWriter object is disposed, otherwise false.</param>
         </member>
         <member name="M:CsvHelper.CsvWriter.#ctor(System.IO.TextWriter,CsvHelper.Configuration.Configuration)">
             <summary>
@@ -3271,6 +3787,14 @@
             </summary>
             <param name="writer">The <see cref="T:System.IO.StreamWriter"/> use to write the CSV file.</param>
             <param name="configuration">The configuration.</param>
+        </member>
+        <member name="M:CsvHelper.CsvWriter.#ctor(System.IO.TextWriter,CsvHelper.Configuration.Configuration,System.Boolean)">
+            <summary>
+            Creates a new CSV writer using the given <see cref="T:System.IO.TextWriter"/>.
+            </summary>
+            <param name="writer">The <see cref="T:System.IO.StreamWriter"/> use to write the CSV file.</param>
+            <param name="configuration">The configuration.</param>
+            <param name="leaveOpen">true to leave the writer open after the CsvWriter object is disposed, otherwise false.</param>
         </member>
         <member name="M:CsvHelper.CsvWriter.#ctor(CsvHelper.ISerializer)">
             <summary>
@@ -3399,10 +3923,17 @@
             <typeparam name="T">The type of the record.</typeparam>
             <param name="record">The record to write.</param>
         </member>
+        <member name="M:CsvHelper.CsvWriter.WriteRecords(System.Collections.IEnumerable)">
+            <summary>
+            Writes the list of records to the CSV file.
+            </summary>
+            <param name="records">The list of records to write.</param>
+        </member>
         <member name="M:CsvHelper.CsvWriter.WriteRecords``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Writes the list of records to the CSV file.
             </summary>
+            <typeparam name="T">Record type.</typeparam>
             <param name="records">The list of records to write.</param>
         </member>
         <member name="M:CsvHelper.CsvWriter.CanWrite(CsvHelper.Configuration.MemberMap)">
@@ -3513,13 +4044,19 @@
             </summary>
             <param name="writer">The writer.</param>
         </member>
-        <member name="M:CsvHelper.Expressions.ExpressionManager.CreateMemberBindingsForMapping(CsvHelper.Configuration.ClassMap,System.Type,System.Collections.Generic.List{System.Linq.Expressions.MemberBinding})">
+        <member name="M:CsvHelper.Expressions.ExpressionManager.CreateConstructorArgumentExpressionsForMapping(CsvHelper.Configuration.ClassMap,System.Collections.Generic.List{System.Linq.Expressions.Expression})">
             <summary>
-            Creates the member bindings for the given <see cref="T:CsvHelper.Configuration.ClassMap"/>.
+            Creates the constructor arguments used to create a type.
             </summary>
-            <param name="mapping">The mapping to create the bindings for.</param>
-            <param name="recordType">The type of record.</param>
-            <param name="bindings">The bindings that will be added to from the mapping.</param>
+            <param name="map">The mapping to create the arguments for.</param>
+            <param name="argumentExpressions">The arguments that will be added to the mapping.</param>
+        </member>
+        <member name="M:CsvHelper.Expressions.ExpressionManager.CreateMemberAssignmentsForMapping(CsvHelper.Configuration.ClassMap,System.Collections.Generic.List{System.Linq.Expressions.MemberAssignment})">
+            <summary>
+            Creates the member assignments for the given <see cref="T:CsvHelper.Configuration.ClassMap"/>.
+            </summary>
+            <param name="mapping">The mapping to create the assignments for.</param>
+            <param name="assignments">The assignments that will be added to from the mapping.</param>
         </member>
         <member name="M:CsvHelper.Expressions.ExpressionManager.CreateGetFieldExpression(CsvHelper.Configuration.MemberMap)">
             <summary>
@@ -3539,6 +4076,15 @@
             <param name="memberMap">The member map to look for on the mapping.</param>
             <returns>An Expression to access the given member.</returns>
         </member>
+        <member name="M:CsvHelper.Expressions.ExpressionManager.CreateInstanceAndAssignMembers(System.Type,System.Collections.Generic.List{System.Linq.Expressions.MemberAssignment})">
+            <summary>
+            Creates an instance of the given type using <see cref="M:CsvHelper.ReflectionHelper.CreateInstance(System.Type,System.Object[])"/> (in turn using the ObjectResolver), then assigns
+            the given member assignments to that instance.
+            </summary>
+            <param name="recordType">The type of the record we're creating.</param>
+            <param name="assignments">The member assignments that will be assigned to the created instance.</param>
+            <returns>A <see cref="T:System.Linq.Expressions.BlockExpression"/> representing the instance creation and assignments.</returns>
+        </member>
         <member name="T:CsvHelper.Expressions.ObjectRecordCreator">
             <summary>
             Creates objects.
@@ -3557,13 +4103,6 @@
             reader row.
             </summary>
             <param name="recordType">The record type.</param>
-        </member>
-        <member name="M:CsvHelper.Expressions.ObjectRecordCreator.CreateConstructorArgumentExpressionsForMapping(CsvHelper.Configuration.ClassMap,System.Collections.Generic.List{System.Linq.Expressions.Expression})">
-            <summary>
-            Creates the constructor arguments used to create a type.
-            </summary>
-            <param name="map">The mapping to create the arguments for.</param>
-            <param name="argumentExpressions">The arguments that will be added to the mapping.</param>
         </member>
         <member name="T:CsvHelper.Expressions.ObjectRecordWriter">
             <summary>
@@ -4006,6 +4545,12 @@
             Appends the current reading progress.
             </summary>
         </member>
+        <member name="M:CsvHelper.IFieldReader.SetBufferPosition(System.Int32)">
+            <summary>
+            Move's the buffer position according to the given offset.
+            </summary>
+            <param name="offset">The offset to move the buffer.</param>
+        </member>
         <member name="M:CsvHelper.IFieldReader.SetFieldStart(System.Int32)">
             <summary>
             Sets the start of the field to the current buffer position.
@@ -4071,6 +4616,17 @@
             may not be the same type as the given type.</param>
             <param name="constructorArgs">Constructor arguments used to create the type.</param>
         </member>
+        <member name="M:CsvHelper.IObjectResolver.Resolve``1(System.Object[])">
+            <summary>
+            Creates an object from the given type using the <see cref="P:CsvHelper.IObjectResolver.ResolveFunction"/>
+            function. If <see cref="P:CsvHelper.IObjectResolver.CanResolve"/> is false, the object will be
+            created using CsvHelper's default object creation. If <see cref="P:CsvHelper.IObjectResolver.UseFallback"/>
+            is false, an exception is thrown.
+            </summary>
+            <typeparam name="T">The type to create an instance from. The created object
+            may not be the same type as the given type.</typeparam>
+            <param name="constructorArgs">Constructor arguments used to create the type.</param>
+        </member>
         <member name="T:CsvHelper.IParser">
             <summary>
             Defines methods used the parse a CSV file.
@@ -4116,7 +4672,7 @@
         </member>
         <member name="M:CsvHelper.IReader.ReadHeader">
             <summary>
-            Reads the header field without reading the first row.
+            Reads the header record without reading the first row.
             </summary>
             <returns>True if there are more records, otherwise false.</returns>
         </member>
@@ -4572,188 +5128,6 @@
             <param name="type">The <see cref="T:System.Type"/> of the record.</param>
             <returns>The record.</returns>
         </member>
-        <member name="T:CsvHelper.IReadingContext">
-            <summary>
-            Context used when reading.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.RawRecordBuilder">
-            <summary>
-            Gets the raw record builder.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.FieldBuilder">
-            <summary>
-            Gets the field builder.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.RecordBuilder">
-            <summary>
-            Gets the record builder.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.NamedIndexes">
-            <summary>
-            Gets the named indexes.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.NamedIndexCache">
-            <summary>
-            Getse the named indexes cache.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.TypeConverterOptionsCache">
-            <summary>
-            Gets the type converter options cache.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.CreateRecordFuncs">
-            <summary>
-            Gets the create record functions.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.HydrateRecordActions">
-            <summary>
-            Gets the hydrate record actions.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.ReusableMemberMapData">
-            <summary>
-            Gets the reusable member map data.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.ParserConfiguration">
-            <summary>
-            Gets the <see cref="T:CsvHelper.CsvParser"/> configuration.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.ReaderConfiguration">
-            <summary>
-            Gets the <see cref="T:CsvHelper.CsvReader"/> configuration.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.Reader">
-            <summary>
-            Gets the <see cref="T:System.IO.TextReader"/> that is read from.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.LeaveOpen">
-            <summary>
-            Gets a value indicating if the <see cref="P:CsvHelper.IReadingContext.Reader"/>
-            should be left open when disposing.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.Buffer">
-            <summary>
-            Gets the buffer used to store data from the <see cref="P:CsvHelper.IReadingContext.Reader"/>.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.RawRecord">
-            <summary>
-            Gets all the characters of the record including
-            quotes, delimeters, and line endings.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.Field">
-            <summary>
-            Gets the field.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.BufferPosition">
-            <summary>
-            Gets the buffer position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.FieldStartPosition">
-            <summary>
-            Gets the field start position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.FieldEndPosition">
-            <summary>
-            Gets the field end position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.RawRecordStartPosition">
-            <summary>
-            Gets the raw record start position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.RawRecordEndPosition">
-            <summary>
-            Gets the raw record end position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.CharsRead">
-            <summary>
-            Gets the number of characters read from the <see cref="P:CsvHelper.IReadingContext.Reader"/>.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.CharPosition">
-            <summary>
-            Gets the character position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.BytePosition">
-            <summary>
-            Gets the byte position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.IsFieldBad">
-            <summary>
-            Gets a value indicating if the field is bad.
-            True if the field is bad, otherwise false.
-            A field is bad if a quote is found in a field
-            that isn't escaped.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.Record">
-            <summary>
-            Gets the record.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.Row">
-            <summary>
-            Gets the row of the CSV file that the parser is currently on.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.RawRow">
-            <summary>
-            Gets the row of the CSV file that the parser is currently on.
-            This is the actual file row.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.C">
-            <summary>
-            Gets the character the field reader is currently on.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.HasBeenRead">
-            <summary>
-            Gets a value indicating if reading has begun.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.HeaderRecord">
-            <summary>
-            Gets the header record.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.CurrentIndex">
-            <summary>
-            Gets the current index.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IReadingContext.ColumnCount">
-            <summary>
-            Gets the column count.
-            </summary>
-        </member>
-        <member name="M:CsvHelper.IReadingContext.ClearCache(CsvHelper.Caches)">
-            <summary>
-            Clears the specified caches.
-            </summary>
-            <param name="cache">The caches to clear.</param>
-        </member>
         <member name="T:CsvHelper.ISerializer">
             <summary>
             Defines methods used to serialize data into a CSV file.
@@ -4818,10 +5192,17 @@
             This automatically flushes the writer.
             </summary>
         </member>
+        <member name="M:CsvHelper.IWriter.WriteRecords(System.Collections.IEnumerable)">
+            <summary>
+            Writes the list of records to the CSV file.
+            </summary>
+            <param name="records">The list of records to write.</param>
+        </member>
         <member name="M:CsvHelper.IWriter.WriteRecords``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Writes the list of records to the CSV file.
             </summary>
+            <typeparam name="T">Record type.</typeparam>
             <param name="records">The list of records to write.</param>
         </member>
         <member name="T:CsvHelper.IWriterRow">
@@ -4932,86 +5313,19 @@
             <typeparam name="T">The type of the record.</typeparam>
             <param name="record">The record to write.</param>
         </member>
-        <member name="T:CsvHelper.IWritingContext">
-            <summary>
-            Context used when writing.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.TypeActions">
-            <summary>
-            Gets the type actions.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.TypeConverterOptionsCache">
-            <summary>
-            Gets the type converter options.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.ReusableMemberMapData">
-            <summary>
-            Gets or sets the reusable member map data.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.WriterConfiguration">
-            <summary>
-            Gets the writer configuration.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.SerializerConfiguration">
-            <summary>
-            Gets the serializer configuration.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.Writer">
-            <summary>
-            Gets the <see cref="T:System.IO.TextWriter"/>.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.LeaveOpen">
-            <summary>
-            Gets a value indicating if the <see cref="P:CsvHelper.IWritingContext.Writer"/>
-            should be left open when disposing.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.Row">
-            <summary>
-            Gets the current row.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.Record">
-            <summary>
-            Get the current record;
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.HasHeaderBeenWritten">
-            <summary>
-            Gets a value indicating if the header has been written.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.IWritingContext.HasRecordBeenWritten">
-            <summary>
-            Gets a value indicating if a record has been written.
-            </summary>
-        </member>
-        <member name="M:CsvHelper.IWritingContext.ClearCache(CsvHelper.Caches)">
-            <summary>
-            Clears the specified caches.
-            </summary>
-            <param name="cache">The caches to clear.</param>
-        </member>
         <member name="T:CsvHelper.MissingFieldException">
             <summary>
             Represents an error caused because a field is missing
             in the header while reading a CSV file.
             </summary>
         </member>
-        <member name="M:CsvHelper.MissingFieldException.#ctor(CsvHelper.IReadingContext)">
+        <member name="M:CsvHelper.MissingFieldException.#ctor(CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.MissingFieldException"/> class.
             </summary>
             <param name="context">The reading context.</param>
         </member>
-        <member name="M:CsvHelper.MissingFieldException.#ctor(CsvHelper.IReadingContext,System.String)">
+        <member name="M:CsvHelper.MissingFieldException.#ctor(CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.MissingFieldException"/> class
             with a specified error message.
@@ -5019,7 +5333,7 @@
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.MissingFieldException.#ctor(CsvHelper.IReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.MissingFieldException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.MissingFieldException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -5032,6 +5346,11 @@
         <member name="T:CsvHelper.ObjectResolver">
             <summary>
             Creates objects from a given type.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.ObjectResolver.Current">
+            <summary>
+            Gets or sets the current resolver.
             </summary>
         </member>
         <member name="P:CsvHelper.ObjectResolver.UseFallback">
@@ -5084,23 +5403,29 @@
             may not be the same type as the given type.</param>
             <param name="constructorArgs">Constructor arguments used to create the type.</param>
         </member>
-        <member name="P:CsvHelper.ObjectResolver.Current">
+        <member name="M:CsvHelper.ObjectResolver.Resolve``1(System.Object[])">
             <summary>
-            Gets or sets the current resolver.
+            Creates an object from the given type using the <see cref="P:CsvHelper.ObjectResolver.ResolveFunction"/>
+            function. If <see cref="P:CsvHelper.ObjectResolver.CanResolve"/> is false, the object will be
+            created using CsvHelper's default object creation. If <see cref="P:CsvHelper.ObjectResolver.UseFallback"/>
+            is false, an exception is thrown.
             </summary>
+            <typeparam name="T">The type to create an instance from. The created object
+            may not be the same type as the given type.</typeparam>
+            <param name="constructorArgs">Constructor arguments used to create the type.</param>
         </member>
         <member name="T:CsvHelper.ParserException">
             <summary>
             Represents errors that occur while parsing a CSV file.
             </summary>
         </member>
-        <member name="M:CsvHelper.ParserException.#ctor(CsvHelper.IReadingContext)">
+        <member name="M:CsvHelper.ParserException.#ctor(CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ParserException"/> class.
             </summary>
             <param name="context">The reading context.</param>
         </member>
-        <member name="M:CsvHelper.ParserException.#ctor(CsvHelper.IReadingContext,System.String)">
+        <member name="M:CsvHelper.ParserException.#ctor(CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ParserException"/> class
             with a specified error message.
@@ -5108,7 +5433,7 @@
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.ParserException.#ctor(CsvHelper.IReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.ParserException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ParserException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -5123,13 +5448,13 @@
             Represents errors that occur while reading a CSV file.
             </summary>
         </member>
-        <member name="M:CsvHelper.ReaderException.#ctor(CsvHelper.IReadingContext)">
+        <member name="M:CsvHelper.ReaderException.#ctor(CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ReaderException"/> class.
             </summary>
             <param name="context">The reading context.</param>
         </member>
-        <member name="M:CsvHelper.ReaderException.#ctor(CsvHelper.IReadingContext,System.String)">
+        <member name="M:CsvHelper.ReaderException.#ctor(CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ReaderException"/> class
             with a specified error message.
@@ -5137,7 +5462,7 @@
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.ReaderException.#ctor(CsvHelper.IReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.ReaderException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ReaderException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -5152,49 +5477,149 @@
             CSV reading state.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.RawRecordBuilder">
+        <member name="F:CsvHelper.ReadingContext.RawRecordBuilder">
             <summary>
             Gets the raw record builder.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.FieldBuilder">
+        <member name="F:CsvHelper.ReadingContext.FieldBuilder">
             <summary>
             Gets the field builder.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.RecordBuilder">
+        <member name="F:CsvHelper.ReadingContext.RecordBuilder">
             <summary>
             Gets the record builder.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.NamedIndexes">
+        <member name="F:CsvHelper.ReadingContext.NamedIndexes">
             <summary>
             Gets the named indexes.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.NamedIndexCache">
+        <member name="F:CsvHelper.ReadingContext.NamedIndexCache">
             <summary>
             Getse the named indexes cache.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.TypeConverterOptionsCache">
+        <member name="F:CsvHelper.ReadingContext.TypeConverterOptionsCache">
             <summary>
             Gets the type converter options cache.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.CreateRecordFuncs">
+        <member name="F:CsvHelper.ReadingContext.CreateRecordFuncs">
             <summary>
             Gets the create record functions.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.HydrateRecordActions">
+        <member name="F:CsvHelper.ReadingContext.HydrateRecordActions">
             <summary>
             Gets the hydrate record actions.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.ReusableMemberMapData">
+        <member name="F:CsvHelper.ReadingContext.ReusableMemberMapData">
             <summary>
             Gets the reusable member map data.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.Reader">
+            <summary>
+            Gets the <see cref="T:System.IO.TextReader"/> that is read from.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.LeaveOpen">
+            <summary>
+            Gets a value indicating if the <see cref="F:CsvHelper.ReadingContext.Reader"/>
+            should be left open when disposing.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.Buffer">
+            <summary>
+            Gets the buffer used to store data from the <see cref="F:CsvHelper.ReadingContext.Reader"/>.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.BufferPosition">
+            <summary>
+            Gets the buffer position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.FieldStartPosition">
+            <summary>
+            Gets the field start position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.FieldEndPosition">
+            <summary>
+            Gets the field end position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.RawRecordStartPosition">
+            <summary>
+            Gets the raw record start position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.RawRecordEndPosition">
+            <summary>
+            Gets the raw record end position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.CharsRead">
+            <summary>
+            Gets the number of characters read from the <see cref="F:CsvHelper.ReadingContext.Reader"/>.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.CharPosition">
+            <summary>
+            Gets the character position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.BytePosition">
+            <summary>
+            Gets the byte position.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.IsFieldBad">
+            <summary>
+            Gets a value indicating if the field is bad.
+            True if the field is bad, otherwise false.
+            A field is bad if a quote is found in a field
+            that isn't escaped.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.Record">
+            <summary>
+            Gets the record.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.Row">
+            <summary>
+            Gets the row of the CSV file that the parser is currently on.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.RawRow">
+            <summary>
+            Gets the row of the CSV file that the parser is currently on.
+            This is the actual file row.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.HasBeenRead">
+            <summary>
+            Gets a value indicating if reading has begun.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.HeaderRecord">
+            <summary>
+            Gets the header record.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.CurrentIndex">
+            <summary>
+            Gets the current index.
+            </summary>
+        </member>
+        <member name="F:CsvHelper.ReadingContext.ColumnCount">
+            <summary>
+            Gets the column count.
             </summary>
         </member>
         <member name="P:CsvHelper.ReadingContext.ParserConfiguration">
@@ -5207,22 +5632,6 @@
             Gets the <see cref="T:CsvHelper.CsvReader"/> configuration.
             </summary>
         </member>
-        <member name="P:CsvHelper.ReadingContext.Reader">
-            <summary>
-            Gets the <see cref="T:System.IO.TextReader"/> that is read from.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.LeaveOpen">
-            <summary>
-            Gets a value indicating if the <see cref="P:CsvHelper.ReadingContext.Reader"/>
-            should be left open when disposing.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.Buffer">
-            <summary>
-            Gets the buffer used to store data from the <see cref="P:CsvHelper.ReadingContext.Reader"/>.
-            </summary>
-        </member>
         <member name="P:CsvHelper.ReadingContext.RawRecord">
             <summary>
             Gets all the characters of the record including
@@ -5232,95 +5641,6 @@
         <member name="P:CsvHelper.ReadingContext.Field">
             <summary>
             Gets the field.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.BufferPosition">
-            <summary>
-            Gets the buffer position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.FieldStartPosition">
-            <summary>
-            Gets the field start position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.FieldEndPosition">
-            <summary>
-            Gets the field end position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.RawRecordStartPosition">
-            <summary>
-            Gets the raw record start position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.RawRecordEndPosition">
-            <summary>
-            Gets the raw record end position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.CharsRead">
-            <summary>
-            Gets the number of characters read from the <see cref="P:CsvHelper.ReadingContext.Reader"/>.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.CharPosition">
-            <summary>
-            Gets the character position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.BytePosition">
-            <summary>
-            Gets the byte position.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.IsFieldBad">
-            <summary>
-            Gets a value indicating if the field is bad.
-            True if the field is bad, otherwise false.
-            A field is bad if a quote is found in a field
-            that isn't escaped.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.Record">
-            <summary>
-            Gets the record.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.Row">
-            <summary>
-            Gets the row of the CSV file that the parser is currently on.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.RawRow">
-            <summary>
-            Gets the row of the CSV file that the parser is currently on.
-            This is the actual file row.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.C">
-            <summary>
-            Gets the character the field reader is currently on.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.HasBeenRead">
-            <summary>
-            Gets a value indicating if reading has begun.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.HeaderRecord">
-            <summary>
-            Gets the header record.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.CurrentIndex">
-            <summary>
-            Gets the current index.
-            </summary>
-        </member>
-        <member name="P:CsvHelper.ReadingContext.ColumnCount">
-            <summary>
-            Gets the column count.
             </summary>
         </member>
         <member name="M:CsvHelper.ReadingContext.#ctor(System.IO.TextReader,CsvHelper.Configuration.Configuration,System.Boolean)">
@@ -5425,6 +5745,12 @@
             <summary>
             Gets a value indicating if the given type has a parameterless constructor.
             True if it has a parameterless constructor, otherwise false.
+            </summary>
+            <param name="type">The type.</param>
+        </member>
+        <member name="M:CsvHelper.ReflectionExtensions.HasConstructor(System.Type)">
+            <summary>
+            Gets a value indicating if the given type has any constructors.
             </summary>
             <param name="type">The type.</param>
         </member>
@@ -6058,6 +6384,14 @@
             <param name="type">The type to get the converter for.</param>
             <returns>The <see cref="T:CsvHelper.TypeConversion.ITypeConverter"/> for the given <see cref="T:System.Type"/>.</returns>
         </member>
+        <member name="M:CsvHelper.TypeConversion.TypeConverterCache.GetConverter(System.Reflection.MemberInfo)">
+            <summary>
+            Gets the converter for the given member. If an attribute is
+            found on the member, that will be used, otherwise the cache
+            will be used.
+            </summary>
+            <param name="member">The member to get the converter for.</param>
+        </member>
         <member name="M:CsvHelper.TypeConversion.TypeConverterCache.GetConverter``1">
             <summary>
             Gets the converter for the given <see cref="T:System.Type"/>.
@@ -6070,50 +6404,88 @@
             Represents errors that occur while reading a CSV file.
             </summary>
         </member>
-        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.ReadingContext)">
+        <member name="P:CsvHelper.TypeConversion.TypeConverterException.Text">
+            <summary>
+            The text used in ConvertFromString.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.TypeConversion.TypeConverterException.Value">
+            <summary>
+            The value used in ConvertToString.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.TypeConversion.TypeConverterException.TypeConverter">
+            <summary>
+            The type converter.
+            </summary>
+        </member>
+        <member name="P:CsvHelper.TypeConversion.TypeConverterException.MemberMapData">
+            <summary>
+            The member map data used in ConvertFromString and ConvertToString.
+            </summary>
+        </member>
+        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.TypeConversion.ITypeConverter,CsvHelper.Configuration.MemberMapData,System.String,CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.TypeConversion.TypeConverterException"/> class.
             </summary>
+            <param name="typeConverter">The type converter.</param>
+            <param name="memberMapData">The member map data.</param>
+            <param name="text">The text.</param>
             <param name="context">The reading context.</param>
         </member>
-        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.WritingContext)">
+        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.TypeConversion.ITypeConverter,CsvHelper.Configuration.MemberMapData,System.Object,CsvHelper.WritingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.TypeConversion.TypeConverterException"/> class.
             </summary>
+            <param name="typeConverter">The type converter.</param>
+            <param name="memberMapData">The member map data.</param>
+            <param name="value">The value.</param>
             <param name="context">The writing context.</param>
         </member>
-        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.ReadingContext,System.String)">
+        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.TypeConversion.ITypeConverter,CsvHelper.Configuration.MemberMapData,System.String,CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.TypeConversion.TypeConverterException"/> class
             with a specified error message.
             </summary>
+            <param name="typeConverter">The type converter.</param>
+            <param name="memberMapData">The member map data.</param>
+            <param name="text">The text.</param>
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.WritingContext,System.String)">
+        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.TypeConversion.ITypeConverter,CsvHelper.Configuration.MemberMapData,System.Object,CsvHelper.WritingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.TypeConversion.TypeConverterException"/> class
             with a specified error message.
             </summary>
+            <param name="typeConverter">The type converter.</param>
+            <param name="memberMapData">The member map data.</param>
+            <param name="value">The value.</param>
             <param name="context">The writing context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.TypeConversion.ITypeConverter,CsvHelper.Configuration.MemberMapData,System.String,CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.TypeConversion.TypeConverterException"/> class
             with a specified error message and a reference to the inner exception that 
             is the cause of this exception.
             </summary>
+            <param name="typeConverter">The type converter.</param>
+            <param name="memberMapData">The member map data.</param>
+            <param name="text">The text.</param>
             <param name="context">The reading context.</param>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
         </member>
-        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.WritingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.TypeConversion.TypeConverterException.#ctor(CsvHelper.TypeConversion.ITypeConverter,CsvHelper.Configuration.MemberMapData,System.Object,CsvHelper.WritingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.TypeConversion.TypeConverterException"/> class
             with a specified error message and a reference to the inner exception that 
             is the cause of this exception.
             </summary>
+            <param name="typeConverter">The type converter.</param>
+            <param name="memberMapData">The member map data.</param>
+            <param name="value">The value.</param>
             <param name="context">The writing context.</param>
             <param name="message">The error message that explains the reason for the exception.</param>
             <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
@@ -6265,13 +6637,13 @@
             Represents a user supplied validation failure.
             </summary>
         </member>
-        <member name="M:CsvHelper.ValidationException.#ctor(CsvHelper.IReadingContext)">
+        <member name="M:CsvHelper.ValidationException.#ctor(CsvHelper.ReadingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ValidationException"/> class.
             </summary>
             <param name="context">The reading context.</param>
         </member>
-        <member name="M:CsvHelper.ValidationException.#ctor(CsvHelper.IReadingContext,System.String)">
+        <member name="M:CsvHelper.ValidationException.#ctor(CsvHelper.ReadingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ValidationException"/> class
             with a specified error message.
@@ -6279,7 +6651,7 @@
             <param name="context">The reading context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.ValidationException.#ctor(CsvHelper.IReadingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.ValidationException.#ctor(CsvHelper.ReadingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.ValidationException"/> class
             with a specified error message and a reference to the inner exception that 
@@ -6294,13 +6666,13 @@
             Represents errors that occur while writing a CSV file.
             </summary>
         </member>
-        <member name="M:CsvHelper.WriterException.#ctor(CsvHelper.IWritingContext)">
+        <member name="M:CsvHelper.WriterException.#ctor(CsvHelper.WritingContext)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.WriterException"/> class.
             </summary>
             <param name="context">The writing context.</param>
         </member>
-        <member name="M:CsvHelper.WriterException.#ctor(CsvHelper.IWritingContext,System.String)">
+        <member name="M:CsvHelper.WriterException.#ctor(CsvHelper.WritingContext,System.String)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.WriterException"/> class
             with a specified error message.
@@ -6308,7 +6680,7 @@
             <param name="context">The writing context.</param>
             <param name="message">The message that describes the error.</param>
         </member>
-        <member name="M:CsvHelper.WriterException.#ctor(CsvHelper.IWritingContext,System.String,System.Exception)">
+        <member name="M:CsvHelper.WriterException.#ctor(CsvHelper.WritingContext,System.String,System.Exception)">
             <summary>
             Initializes a new instance of the <see cref="T:CsvHelper.WriterException"/> class
             with a specified error message and a reference to the inner exception that 

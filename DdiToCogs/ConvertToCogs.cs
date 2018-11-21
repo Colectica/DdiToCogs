@@ -27,7 +27,10 @@ namespace DdiToCogs
 
         List<TypedReference> loadedTypedReference = new List<TypedReference>();
 
-        
+
+        List<Substitution> substitutions = new List<Substitution>();
+
+
         private string ProcessXmlSchemaAnnotation(XmlSchemaAnnotation annotation)
         {
             if (annotation == null)
@@ -87,7 +90,7 @@ namespace DdiToCogs
                 {
                     dataType.Extends = GetTypeName(simpleContentExtension.BaseTypeName);
                     derivedFrom.AddValue(dataType.Extends, dataType.Name);
-
+                    
                     var attributeProps = GetPropertiesFromAttributes(simpleContentExtension.Attributes);
                     dataType.Properties.AddRange(attributeProps);
                 }
@@ -95,7 +98,7 @@ namespace DdiToCogs
                 {
                     dataType.Extends = GetTypeName(complexContentExtension.BaseTypeName);
                     derivedFrom.AddValue(dataType.Extends, dataType.Name);
-
+                    
                     if(complexContentExtension.Particle != null)
                     {
                         var elementProps = GetProperties(complexContentExtension.Particle);
@@ -132,7 +135,28 @@ namespace DdiToCogs
                 }
                 
             }
-            
+
+
+
+            // types to update manually
+            if (dataType.Name == "URNType")
+            {
+                dataType.Extends = null;
+            }
+            if (dataType.Name == "DelimiterType")
+            {
+                dataType.Extends = null;
+                var delim = new Property()
+                {
+                    DataType = "string",
+                    Name = "DelimiterTypeValue",
+                    MinCardinality = "1",
+                    MaxCardinality = "1",
+                    Enumeration = "space tab comma semicolon colon pipe other"
+                };
+                dataType.Properties.Add(delim);
+            }
+
             if (isItem)
             {
                 if (items.ContainsKey(dataType.Name))
@@ -311,7 +335,7 @@ namespace DdiToCogs
 
                     if (ct.AttributeUses.Values.Cast<XmlSchemaAttribute>().Any(a =>
                         a.Name == "isVersionable" ||
-                        a.Name == "isMaintainable"))
+                        a.Name == "isMaintainable") && sibling.QualifiedName.Name != "ValueRepresentation" )
                     {
                         if (siblings.Count == 2)
                         {
@@ -341,7 +365,7 @@ namespace DdiToCogs
                             {
                                 //TODO handle substitution groups?
                             }
-                            
+
                             TypedReference strongly = new TypedReference();
                             strongly.ParentTypeName = parentTypeName;
                             strongly.ReferenceName = reference.QualifiedName.Name;
@@ -371,7 +395,7 @@ namespace DdiToCogs
                     }
                     else
                     {
-
+                        // ValueRepresentation and ValueRepresentationReference + other non pairs
                     }
 
                 }
@@ -411,14 +435,14 @@ namespace DdiToCogs
                             if (IsTypeReferenceable(possibleTypeName))
                             {
                                 typedReference.ItemTypeName = GetTypeName(possibleTypeName);
-                            }                           
+                            }
                         }
 
                         XmlSchemaComplexType complexParent = GetFirstComplexParent(element);
                         if (complexParent == null) { throw new InvalidOperationException("Could not find the parent of this reference"); }
                         typedReference.ParentTypeName = GetTypeName(complexParent.QualifiedName);
 
-                        if(typedReference.ItemTypeName == null)
+                        if (typedReference.ItemTypeName == null)
                         {
                             unknownTypedReference.Add(typedReference);
                         }
@@ -426,6 +450,10 @@ namespace DdiToCogs
                         {
                             conventionTypedReference.Add(typedReference);
                         }
+                    }
+                    else
+                    {
+
                     }
                 }
 
@@ -465,7 +493,7 @@ namespace DdiToCogs
                     Property p = new Property();
                     p.Description = ProcessXmlSchemaAnnotation(groupRef.Annotation);
 
-                    p.DataType = "dcTerms";
+                    p.DataType = "DcTerms";
                     p.Name = "DcTerms";
 
                     p.MinCardinality = "0";
@@ -526,11 +554,13 @@ namespace DdiToCogs
             p.MaxCardinality = element.MaxOccursString;
             UpdateCardinality(p);
 
-
+            if(substitutions.Any(x => x.Group == p.Name))
+            {
+                p.AllowSubtypes = "true";
+            }
 
             p.DeprecatedNamespace = element.QualifiedName.Namespace;
             p.DeprecatedElementOrAttribute = "e";
-
 
             if (element.UnhandledAttributes != null) { throw new Exception(); }
             return p;
@@ -584,6 +614,19 @@ namespace DdiToCogs
                 }
             }
 
+
+            foreach (var globalElement in ddiSchema.GlobalElements.Values.Cast<XmlSchemaElement>())
+            {
+                if(!globalElement.SubstitutionGroup.IsEmpty)
+                {
+                    string elementName = globalElement.QualifiedName.Name;
+                    string group = globalElement.SubstitutionGroup.Name;
+                    string schemaType = globalElement.ElementSchemaType.QualifiedName.Name;
+
+                    var sub = new Substitution() { Group = group, Name = elementName, SchemaType = schemaType };
+                    substitutions.Add(sub);
+                }
+            }
 
 
             foreach(var definedType in ddiSchema.GlobalTypes.Values.Cast<XmlSchemaType>())
@@ -654,6 +697,8 @@ namespace DdiToCogs
                         property.Name = sb.ToString();
                     }
                     property.DeprecatedNamespace = simpleType.QualifiedName.Namespace;
+
+
 
                     // annotations are not consistent across the schemas
                     property.Description += ProcessXmlSchemaAnnotation(simpleType.Annotation);
@@ -906,14 +951,15 @@ namespace DdiToCogs
             var abstractMaintainable = dataTypes["AbstractMaintainableType"];
             var abstractVersionable = dataTypes["AbstractVersionableType"];
             var abstractIdentifiable = dataTypes["AbstractIdentifiableType"];
-            
-                        
+
             // keep the first 6 properties
-            identifiable.Properties = abstractIdentifiable.Properties.Take(6).ToList();
+            identifiable.Properties = identification.Concat(abstractIdentifiable.Properties.Skip(4).Take(2)).ToList();
+            identifiable.Extends = null;
 
             // skip the 4 identifier parts, it will be injected
             versionable.Properties = identifiable.Properties.Skip(4).Concat(abstractVersionable.Properties).ToList();
             versionable.Extends = null;
+            versionable.Properties[6].DataType = "OtherMaterial";
 
             maintainable.Extends = "Versionable";
             maintainable.Properties = abstractMaintainable.Properties;
@@ -922,7 +968,12 @@ namespace DdiToCogs
             dataTypes.Remove("AbstractMaintainableType");
             dataTypes.Remove("AbstractVersionableType");
 
-         
+
+            var removes = dataTypes.Where(x => x.Value.Extends == "ReferenceType" || x.Key == "ReferenceType" || x.Key == "IDType").Select(x => x.Key).ToList();
+            foreach(var key in removes) { dataTypes.Remove(key); }
+
+            int count = unknownTypedReference.RemoveAll(x => !dataTypes.ContainsKey(x.ParentTypeName));
+                       
             // duplicate properties on one item
             var datetype = dataTypes["DateType"];
             datetype.Properties.RemoveAt(datetype.Properties.FindLastIndex(x => x.Name == "EndDate"));
@@ -932,7 +983,14 @@ namespace DdiToCogs
             var dataTypeProperties = dataTypes.SelectMany(x => x.Value.Properties).ToList();
             var itemProperties = items.SelectMany(x => x.Value.Properties).ToList();
             var allProperties = dataTypeProperties.Concat(itemProperties).ToList();
-            
+
+
+
+            // remove other uses of id type
+            var idtype = allProperties.Where(x => x.Name == "MaintainableID").FirstOrDefault();
+            idtype.DataType = "string";
+
+
             var dupes2 = allProperties.Where(x => x.Name == "CodeListName").ToList();
             foreach(var prop in dupes2)
             {
@@ -1362,5 +1420,12 @@ namespace DdiToCogs
                 Pattern = @"[0-9]+(\.[0-9]+)*"
             }
         };
+    }
+
+    public class Substitution
+    {
+        public string Group { get; set; }
+        public string Name { get; set; }
+        public string SchemaType { get; set; }
     }
 }

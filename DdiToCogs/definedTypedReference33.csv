@@ -178,3 +178,5 @@ Sample,SampleFrameUsedReference,SampleFrame
 Sample,ComponentSampleReference,Sample
 Concept,ExcludesConceptReference,Concept
 Concept,IncludesConceptReference,Concept
+ApprovalReview,ReviewObjectReference,Maintainable Versionable
+ApprovalReview,AgencyOrganizationReference,Agent

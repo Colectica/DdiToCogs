@@ -478,8 +478,16 @@ namespace DdiToCogs
                         // references to complex types/historic identifiable refs have Type at the end
                         p.DataType = defined.ItemTypeName;
                     }
+                    else
+                    {
+                        // something isn't defined 
+                    }
                 }
 
+                if(p.DataType == "ReferenceType")
+                {
+
+                }
                 result.Add(p);
             }
             else if (particle is XmlSchemaGroupRef groupRef)
@@ -972,7 +980,8 @@ namespace DdiToCogs
             var removes = dataTypes.Where(x => x.Value.Extends == "ReferenceType" || x.Key == "ReferenceType" || x.Key == "IDType").Select(x => x.Key).ToList();
             foreach(var key in removes) { dataTypes.Remove(key); }
 
-            int count = unknownTypedReference.RemoveAll(x => !dataTypes.ContainsKey(x.ParentTypeName));
+            var unknownRemoves = unknownTypedReference.Where(x => !(dataTypes.ContainsKey(x.ParentTypeName) || items.ContainsKey(x.ParentTypeName))).ToList();
+            int count = unknownTypedReference.RemoveAll(x => unknownRemoves.Contains(x));
                        
             // duplicate properties on one item
             var datetype = dataTypes["DateType"];

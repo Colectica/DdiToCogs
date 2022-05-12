@@ -30,7 +30,11 @@ namespace DdiToCogs
 
         List<Substitution> substitutions = new List<Substitution>();
 
-
+        // --------------------------------------------------------------------------------
+        // Issue #6 - Variable added to hold maxoccursstring and minoccursstring for choice
+        string choiceMaxOccurs = null;
+        string choiceMinOccurs = null;
+        // --------------------------------------------------------------------------------
         private string ProcessXmlSchemaAnnotation(XmlSchemaAnnotation annotation)
         {
             if (annotation == null)
@@ -107,10 +111,18 @@ namespace DdiToCogs
                     else
                     {
                         // Only adding attributes
+                        // --------------------------------------------------------------------------------
+                        // Issue #1 - Modification added to address issue of empty CSV's in complex types
+                        var attributeProps = GetPropertiesFromAttributes(complexContentExtension.Attributes);
+                        dataType.Properties.AddRange(attributeProps);
+                        //---------------------------------------------------------------------------------
                     }
-                    var attributeProps = GetPropertiesFromAttributes(complexContentExtension.Attributes);
-                    dataType.Properties.AddRange(attributeProps);
-                    
+                    // ------------------------------------------------------------------------------------------------------
+                    // Issue #1 - Removed from code and moved to else above to address issue of empty CSV's in complex types
+                    //var attributeProps = GetPropertiesFromAttributes(complexContentExtension.Attributes);
+                    //dataType.Properties.AddRange(attributeProps);
+                    // ------------------------------------------------------------------------------------------------------
+
                 }
                 else
                 {
@@ -121,7 +133,18 @@ namespace DdiToCogs
             {
                 if(complexType.ContentTypeParticle.GetType().Name == "EmptyParticle")
                 {
+                    // Only adding attributes
+                    // --------------------------------------------------------------------------------
+                    // Issue #1 - Modification added to address issue of empty CSV's in complex types
+                    if (complexType.Particle != null)
+                    {
+                        var elementProps = GetProperties(complexType.Particle);
+                        dataType.Properties.AddRange(elementProps);
+                    }
 
+                    var attributeProps = GetPropertiesFromAttributes(complexType.Attributes);
+                    dataType.Properties.AddRange(attributeProps);
+                    // --------------------------------------------------------------------------------
                 }
                 else
                 {
@@ -396,6 +419,11 @@ namespace DdiToCogs
                     else
                     {
                         // ValueRepresentation and ValueRepresentationReference + other non pairs
+                        // --------------------------------------------------------------------------------
+                        // Issue #6 - Variable updated with maxoccursstring and minoccursstring for choice
+                        choiceMaxOccurs = choice.MaxOccursString;
+                        choiceMinOccurs = choice.MinOccursString;
+                        // --------------------------------------------------------------------------------
                     }
 
                 }
@@ -408,6 +436,12 @@ namespace DdiToCogs
                 {
                     if (item is XmlSchemaParticle p)
                     {
+                        // ---------------------------------------------------------------------------------------
+                        // Issue #6 - Variable used item maxoccursstring and minoccursstring is null for choice
+                        if (p.MaxOccursString == null) p.MaxOccursString = choiceMaxOccurs;
+                        if (p.MinOccursString == null) p.MinOccursString = choiceMinOccurs;
+                        // ---------------------------------------------------------------------------------------
+
                         var partialResult = GetProperties(p);
                         result.AddRange(partialResult);
                     }

@@ -58,7 +58,12 @@ namespace DdiToCogs
 
         private void ProcessComplexType(XmlSchemaComplexType complexType, bool isItem)
         {
-            DataType dataType;
+            if(complexType.Name == "BasicIncrementType")
+            {
+
+            }
+
+                DataType dataType;
             if (isItem)
             {
                 dataType = new Item();
@@ -121,7 +126,8 @@ namespace DdiToCogs
             {
                 if(complexType.ContentTypeParticle.GetType().Name == "EmptyParticle")
                 {
-
+                    var attributeProps = GetPropertiesFromAttributes(complexType.Attributes);
+                    dataType.Properties.AddRange(attributeProps);
                 }
                 else
                 {

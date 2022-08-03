@@ -93,9 +93,26 @@ namespace DdiToCogs
 
                 if (complexType.ContentModel.Content is XmlSchemaSimpleContentExtension simpleContentExtension)
                 {
-                    dataType.Extends = GetTypeName(simpleContentExtension.BaseTypeName);
-                    derivedFrom.AddValue(dataType.Extends, dataType.Name);
-                    
+                    // using value properties instead of deriving from simple types
+                    var simpleType = ProcessSchemaTypeToSimpleType(simpleContentExtension.BaseTypeName.Name);
+                    if(simpleType != null)
+                    {
+                        var propertyName = char.ToUpper(simpleType[0]) + simpleType.Substring(1);
+                        var simpleProperty = new Property()
+                        {
+                            Name = propertyName + "Value",
+                            DataType = simpleType,
+                            MinCardinality = "0",
+                            MaxCardinality = "1"
+                        };
+                        dataType.Properties.Add(simpleProperty);
+                    }
+                    else
+                    {
+                        dataType.Extends = GetTypeName(simpleContentExtension.BaseTypeName);
+                        derivedFrom.AddValue(dataType.Extends, dataType.Name);
+                    }
+
                     var attributeProps = GetPropertiesFromAttributes(simpleContentExtension.Attributes);
                     dataType.Properties.AddRange(attributeProps);
                 }

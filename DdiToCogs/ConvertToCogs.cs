@@ -58,7 +58,7 @@ namespace DdiToCogs
 
         private void ProcessComplexType(XmlSchemaComplexType complexType, bool isItem)
         {
-            if(complexType.Name == "BasicIncrementType")
+            if(complexType.Name == "TopLeftTableAnchorType")
             {
 
             }
@@ -507,7 +507,7 @@ namespace DdiToCogs
                     Property p = new Property();
                     p.Description = ProcessXmlSchemaAnnotation(groupRef.Annotation);
 
-                    p.DataType = "DcTerms";
+                    p.DataType = "dcTerms";
                     p.Name = "DcTerms";
 
                     p.MinCardinality = "0";

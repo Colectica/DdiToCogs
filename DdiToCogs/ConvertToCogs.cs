@@ -147,7 +147,7 @@ namespace DdiToCogs
             // types to update manually
             if (dataType.Name == "URNType")
             {
-                dataType.Extends = null;
+                dataType.Extends = "anyURI";
             }
             if (dataType.Name == "DelimiterType")
             {
@@ -1382,6 +1382,13 @@ namespace DdiToCogs
 
                 XElement clone = new XElement(stringType);
                 clone.Attribute("name").Value = "ContentType";
+
+                var extension = clone.Elements().Elements().Where(x => x.Name == schemaNS + "extension").FirstOrDefault();
+
+                var attr = contentType.Elements().Where(x => x.Attribute("name")?.Value == "textFormat").FirstOrDefault();
+                extension.Add(attr);
+                attr = contentType.Elements().Where(x => x.Attribute("name")?.Value == "scope").FirstOrDefault();
+                extension.Add(attr);
 
                 contentType.ReplaceWith(clone);
             }

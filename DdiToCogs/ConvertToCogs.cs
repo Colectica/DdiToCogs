@@ -164,7 +164,16 @@ namespace DdiToCogs
             // types to update manually
             if (dataType.Name == "URNType")
             {
-                dataType.Extends = "anyURI";
+                dataType.Extends = null;
+
+                var valueprop = new Property()
+                {
+                    Name = "AnyURIValue",
+                    DataType = "anyURI",
+                    MinCardinality = "0",
+                    MaxCardinality = "1"
+                };
+                dataType.Properties.Insert(0, valueprop);
             }
             if (dataType.Name == "DelimiterType")
             {
@@ -1414,8 +1423,8 @@ namespace DdiToCogs
 
         List<Setting> settings = new List<Setting>()
         {
-            new Setting() {Key="Title", Value="DDI Data Documentation 3.3"},
-            new Setting() {Key="ShortTitle", Value="DDI33"},
+            new Setting() {Key="Title", Value="DDI Data Documentation 4.0"},
+            new Setting() {Key="ShortTitle", Value="DDI40"},
             new Setting() {Key="Slug", Value="ddi"},
             new Setting() {Key="Description", Value="The Data Documentation Initiative (DDI) is an international standard for describing the data produced by surveys and other observational methods in the social, behavioral, economic, and health sciences. DDI is a free standard that can document and manage different stages in the research data lifecycle, such as conceptualization, collection, processing, distribution, discovery, and archiving. Documenting data with DDI facilitates understanding, interpretation, and use -- by people, software systems, and computer networks."},
             new Setting() {Key="NamespaceUrl", Value="http://ddialliance.org/ddi"},
